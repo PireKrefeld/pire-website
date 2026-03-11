@@ -1,17 +1,166 @@
 ---
-
+// src/pages/index.astro
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
+<html lang="de">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PIRE Krefeld | Solidarische Bündnisse</title>
+    <style>
+      /* Unser Basis-Design (Dark Mode) mit kurdischen Farben */
+      :root {
+        --bg-dark: #121212;
+        --bg-card: #1e1e1e;
+        --text-main: #e4e5e8;
+        --text-muted: #a1a1aa;
+        --kurd-red: #E30A17;
+        --kurd-yellow: #F8D800;
+        --kurd-green: #329A44;
+      }
+
+      body {
+        background-color: var(--bg-dark);
+        color: var(--text-main);
+        font-family: 'Inter', system-ui, sans-serif;
+        margin: 0;
+        padding: 0;
+        line-height: 1.6;
+      }
+
+      header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1.5rem 2rem;
+        border-bottom: 2px solid var(--kurd-red);
+      }
+
+      nav a {
+        color: var(--text-main);
+        text-decoration: none;
+        margin-left: 1.5rem;
+        font-weight: 500;
+        transition: color 0.3s;
+      }
+
+      nav a:hover { color: var(--kurd-yellow); }
+
+      .hero {
+        text-align: center;
+        padding: 4rem 1rem;
+      }
+
+      .hero img {
+        max-width: 350px;
+        margin-bottom: 2rem;
+      }
+
+      h1 {
+        font-size: 3rem;
+        margin: 0 0 1rem 0;
+      }
+
+      .highlight { color: var(--kurd-yellow); }
+
+      .subtitle {
+        font-size: 1.2rem;
+        color: var(--text-muted);
+        max-width: 600px;
+        margin: 0 auto 2.5rem auto;
+      }
+
+      .btn-group {
+        display: flex;
+        justify-content: center;
+        gap: 1.5rem;
+      }
+
+      .btn {
+        padding: 0.8rem 1.5rem;
+        border-radius: 6px;
+        text-decoration: none;
+        font-weight: bold;
+        transition: opacity 0.2s;
+      }
+
+      .btn-primary { background-color: var(--kurd-green); color: white; }
+      .btn-secondary { background-color: var(--kurd-red); color: white; }
+      .btn:hover { opacity: 0.8; }
+
+      .section {
+        padding: 4rem 2rem;
+        max-width: 1000px;
+        margin: 0 auto;
+      }
+
+      h2 {
+        border-bottom: 3px solid var(--kurd-green);
+        padding-bottom: 0.5rem;
+        display: inline-block;
+      }
+
+      .card-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 2rem;
+        margin-top: 2rem;
+      }
+
+      .card {
+        background-color: var(--bg-card);
+        padding: 1.5rem;
+        border-radius: 8px;
+        border-top: 4px solid var(--kurd-yellow);
+      }
+
+      .status-green { color: var(--kurd-green); font-size: 0.8rem; font-weight: bold; text-transform: uppercase; }
+      .status-red { color: var(--kurd-red); font-size: 0.8rem; font-weight: bold; text-transform: uppercase; }
+    </style>
+  </head>
+  <body>
+    
+    <header>
+      <div style="font-weight: 900; font-size: 1.5rem; letter-spacing: 2px;">PIRE</div>
+      <nav>
+        <a href="#projekte">Projekte</a>
+        <a href="#netzwerk">Bündnisse</a>
+        <a href="#spenden">Unterstützen</a>
+      </nav>
+    </header>
+
+    <main>
+      <section class="hero">
+        <img src="/logo.png" alt="PIRE Krefeld Logo" />
+        
+        <h1>Krefelds Brücke für <br><span class="highlight">solidarische Bündnisse</span></h1>
+        <p class="subtitle">Wir vereinen linke Kräfte, stärken kurdische Solidarität und schaffen emanzipatorische Räume in unserer Stadt.</p>
+        
+        <div class="btn-group">
+          <a href="#projekte" class="btn btn-primary">Unsere Projekte</a>
+          <a href="#spenden" class="btn btn-secondary">Spenden & Unterstützen</a>
+        </div>
+      </section>
+
+      <section id="projekte" class="section">
+        <h2>Aktuelle Projekte</h2>
+        <div class="card-grid">
+          
+          <div class="card">
+            <span class="status-green">Laufend</span>
+            <h3>Frauenstreik Krefeld Bündnis</h3>
+            <p style="color: var(--text-muted); font-size: 0.95rem;">Organisation und Vernetzung für den feministischen Kampftag in Krefeld. Wir streiken für Sichtbarkeit und Rechte.</p>
+          </div>
+
+          <div class="card">
+            <span class="status-red">Abgeschlossen</span>
+            <h3>Bildungs-Workshop</h3>
+            <p style="color: var(--text-muted); font-size: 0.95rem;">Gemeinsames Lernen und Diskutieren über die Schaffung von antifaschistischen und emanzipatorischen Räumen.</p>
+          </div>
+
+        </div>
+      </section>
+    </main>
+
+  </body>
 </html>
