@@ -4,10 +4,11 @@ export default config({
   // --- DAS HIER IST DER NEUE WECHSELSCHALTER ---
   storage: import.meta.env.DEV 
     ? { kind: 'local' } 
-    : {
-        kind: 'github',
-        repo: 'PireKrefeld/pire-website', 
-      },
+    : { kind: 'cloud' },
+    
+  cloud: {
+    project: 'pire-krefeld/pire-website', 
+  },
   // ---------------------------------------------
   
   singletons: {
