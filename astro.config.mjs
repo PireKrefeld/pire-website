@@ -6,8 +6,8 @@ import markdoc from '@astrojs/markdoc';
 import cloudflare from '@astrojs/cloudflare'; 
 
 export default defineConfig({
-  output: 'server', // <-- DER MOTOR MUSS REIN, DAMIT DER WÄCHTER GEBAUT WIRD!
-  adapter: cloudflare(), // <-- DER ADAPTER VERHINDERT DEN CRASH!
+  // KEIN output-Befehl mehr!
+  adapter: cloudflare(), 
   integrations: [
     react(),
     keystatic(),
