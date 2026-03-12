@@ -1,15 +1,22 @@
+//import { config, fields, collection, singleton, component } from '@keystatic/core';
+
+//export default config({
+  // --- DAS HIER IST DER NEUE WECHSELSCHALTER ---
+ // storage: import.meta.env.DEV 
+ //   ? { kind: 'local' } 
+  //  : { kind: 'cloud' },
+    
+ // cloud: {
+ //   project: 'pire-krefeld/pire-website', 
+ // },
+  // ---------------------------------------------
 import { config, fields, collection, singleton, component } from '@keystatic/core';
 
 export default config({
-  // --- DAS HIER IST DER NEUE WECHSELSCHALTER ---
-  storage: import.meta.env.DEV 
-    ? { kind: 'local' } 
-    : { kind: 'cloud' },
-    
-  cloud: {
-    project: 'pire-krefeld/pire-website', 
+  // Purer, unzerstörbarer lokaler Modus
+  storage: {
+    kind: 'local',
   },
-  // ---------------------------------------------
   
   singletons: {
     ticker: singleton({

@@ -5,7 +5,7 @@ import react from '@astrojs/react';
 import markdoc from '@astrojs/markdoc';
 
 export default defineConfig({
-  // KEIN ADAPTER, KEIN OUTPUT. Pures Astro 5 Standard-Verhalten.
+  // Kein Adapter, kein Output, reiner Standard.
   integrations: [
     react(),
     keystatic(),
