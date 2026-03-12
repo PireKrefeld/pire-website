@@ -6,7 +6,6 @@ import markdoc from '@astrojs/markdoc';
 import cloudflare from '@astrojs/cloudflare'; 
 
 export default defineConfig({
-  // KEIN output-Befehl mehr!
   adapter: cloudflare(), 
   integrations: [
     react(),
