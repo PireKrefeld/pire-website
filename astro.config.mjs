@@ -6,7 +6,7 @@ import markdoc from '@astrojs/markdoc';
 import cloudflare from '@astrojs/cloudflare'; 
 
 export default defineConfig({
-  output: 'server', // <-- DER HOLZHAMMER: Zwingt Astro, die Login-Tür stehen zu lassen!
+  output: 'server', // <-- Das MUSS rein, sonst wirft Astro das Dashboard in den Müll!
   adapter: cloudflare(), 
   integrations: [
     react(),
