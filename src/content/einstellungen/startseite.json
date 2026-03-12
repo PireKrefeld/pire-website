@@ -1,0 +1,17 @@
+{
+  "kopfbereich": {
+    "hero_headline": "Krefelds Brücke für Zusammenhalt & Solidarität"
+  },
+  "ueberschriften": {
+    "kalender": "Kalender & Termine",
+    "kalender_leer": "Aktuell stehen keine neuen Termine an.",
+    "projekte": "Aktuelle Projekte & Angebote",
+    "buendnisse": "Bündnisarbeit & Netzwerk",
+    "spenden": "Unterstützen & Spenden"
+  },
+  "spenden": {},
+  "footer": {
+    "kontakt_email": "piresolidarity@tuta.com",
+    "copyright_text": "© 2026 PIRE Krefeld. Alle Rechte vorbehalten."
+  }
+}

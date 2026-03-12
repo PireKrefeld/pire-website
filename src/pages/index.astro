@@ -1,5 +1,28 @@
 ---
+import { getCollection } from 'astro:content';
 import '../styles/global.css';
+
+const alleProjekte = await getCollection('projekte');
+const alleTermine = await getCollection('termine');
+const alleBuendnisse = await getCollection('buendnisse');
+
+const tickerFiles = import.meta.glob('../content/ticker.json', { eager: true });
+const tickerList = Object.values(tickerFiles);
+const ticker = tickerList.length > 0 ? (tickerList[0] as any) : { anzeigen: false, text: "" };
+
+const einstellungenFiles = import.meta.glob('../content/einstellungen/startseite.json', { eager: true });
+const einstellungenList = Object.values(einstellungenFiles);
+
+// Sicherer Fallback, falls die Datei noch nicht gespeichert wurde
+const rawConfig = einstellungenList.length > 0 ? (einstellungenList[0] as any) : {};
+const config = {
+  kopfbereich: rawConfig.kopfbereich || { logo: "", hero_headline: "Krefelds Brücke für Zusammenhalt & Solidarität", hero_text: "Wir vereinen die demokratische Zivilgesellschaft, stärken kurdische Kultur und schaffen Räume für Dialog." },
+  ueberschriften: rawConfig.ueberschriften || { kalender: "Kalender & Termine", kalender_leer: "Aktuell stehen keine neuen Termine an.", projekte: "Aktuelle Projekte & Angebote", buendnisse: "Bündnisarbeit & Netzwerk", buendnisse_text: "Echte gesellschaftliche Arbeit funktioniert nur gemeinsam.", spenden: "Unterstützen & Spenden" },
+  spenden: rawConfig.spenden || { text: "Wir finanzieren damit Räume und Bildungsarbeit für alle.", opencollective: "", paypal: "", liberapay: "", iban: "" },
+  footer: rawConfig.footer || { kontakt_email: "piresolidarity@tuta.com", werte_statement: "Unsere Arbeit basiert auf bedingungsloser Solidarität.", copyright_text: "© 2026 PIRE Krefeld. Alle Rechte vorbehalten." }
+};
+
+const startProjekte = alleProjekte.filter(p => p.data.status !== 'abgebrochen').slice(0, 4);
 ---
 
 <html lang="de" class="scroll-smooth">
@@ -8,223 +31,193 @@ import '../styles/global.css';
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>PIRE Krefeld | Solidarische Brücken bauen</title>
     <style>
-      /* Ticker animiert für Handys */
       @media (max-width: 768px) {
         .ticker-wrap { width: 100%; overflow: hidden; white-space: nowrap; }
-        .ticker-text { 
-          display: inline-block; 
-          padding-left: 100%; 
-          animation: marquee 20s linear infinite; 
-        }
+        .ticker-text { display: inline-block; padding-left: 100%; animation: marquee 20s linear infinite; }
       }
-      @keyframes marquee {
-        0%   { transform: translate(0, 0); }
-        100% { transform: translate(-100%, 0); }
-      }
+      @keyframes marquee { 0% { transform: translate(0, 0); } 100% { transform: translate(-100%, 0); } }
     </style>
   </head>
   
   <body class="bg-slate-50 text-slate-800 font-sans antialiased selection:bg-[#329A44] selection:text-white">
     
     <header class="fixed w-full top-0 z-50 flex flex-col shadow-sm">
-      
       <div class="bg-white/95 backdrop-blur-md border-b border-slate-200">
         <div class="max-w-6xl mx-auto px-6 py-4 flex justify-center items-center">
           <nav class="flex gap-6 md:gap-10 text-sm md:text-base font-semibold text-slate-600">
             <a href="#kalender" class="hover:text-[#329A44] transition-colors">Kalender</a>
-            <a href="#angebote" class="hover:text-[#329A44] transition-colors">Angebote</a>
             <a href="#projekte" class="hover:text-[#329A44] transition-colors">Projekte</a>
+            <a href="#buendnisse" class="hover:text-[#329A44] transition-colors">Bündnisse</a>
             <a href="#spenden" class="hover:text-[#329A44] transition-colors">Unterstützen</a>
           </nav>
         </div>
       </div>
-
-      <div class="bg-red-50/95 backdrop-blur-md border-b border-red-100 flex items-center py-2">
-        <div class="max-w-6xl mx-auto px-6 w-full flex items-center">
-          <span class="text-[#E30A17] font-bold uppercase tracking-wider text-xs md:text-sm flex items-center gap-2 pr-4 shrink-0">
-            <span class="w-2 h-2 rounded-full bg-[#E30A17] animate-pulse"></span>
-            Aktuelles:
-          </span>
-          
-          <div class="ticker-wrap flex-grow md:hidden">
-            <div class="ticker-text text-xs md:text-sm text-slate-800 font-medium">
-              +++ EILMELDUNG: Gemeinsames Newroz-Fest am 20.03. um 16:00 Uhr vor dem Kaiser-Wilhelm-Museum! Feiert mit uns! +++
-            </div>
-          </div>
-          <div class="hidden md:block flex-grow text-sm text-slate-800 font-medium truncate">
-            +++ EILMELDUNG: Gemeinsames Newroz-Fest am 20.03. um 16:00 Uhr vor dem Kaiser-Wilhelm-Museum! Feiert mit uns! +++
+      {ticker.anzeigen && (
+        <div class="bg-red-50/95 backdrop-blur-md border-b border-red-100 flex items-center py-2">
+          <div class="max-w-6xl mx-auto px-6 w-full flex items-center">
+            <span class="text-[#E30A17] font-bold uppercase text-xs md:text-sm flex items-center gap-2 pr-4 shrink-0">
+              <span class="w-2 h-2 rounded-full bg-[#E30A17] animate-pulse"></span> Aktuelles:
+            </span>
+            <div class="ticker-wrap flex-grow md:hidden"><div class="ticker-text text-xs md:text-sm font-medium">{ticker.text}</div></div>
+            <div class="hidden md:block flex-grow text-sm font-medium truncate">{ticker.text}</div>
           </div>
         </div>
-      </div>
+      )}
     </header>
 
     <main class="pt-36">
       
       <section class="max-w-6xl mx-auto px-6 pb-16 md:pb-24 flex flex-col items-center text-center">
-        <img src="/logo.png" alt="PIRE Krefeld Logo" class="w-72 md:w-96 mb-12 drop-shadow-xl" />
-        <h1 class="text-4xl md:text-6xl font-extrabold text-slate-900 tracking-tight mb-6 leading-tight">
-          Krefelds Brücke für <br />
-          <span class="text-[#329A44]">Zusammenhalt & Solidarität</span>
-        </h1>
-        <p class="text-lg md:text-xl text-slate-600 max-w-2xl mb-10 leading-relaxed">
-          Wir vereinen die demokratische Zivilgesellschaft, stärken kurdische Kultur und schaffen Räume für Dialog. Ohne Spaltung, ohne Vorurteile.
-        </p>
+        <img src={config.kopfbereich.logo || "/logo.png"} alt="PIRE Krefeld Logo" class="w-72 md:w-96 mb-12 drop-shadow-xl" />
+        <h1 class="text-4xl md:text-6xl font-extrabold text-slate-900 tracking-tight mb-6 leading-tight">{config.kopfbereich.hero_headline}</h1>
+        <p class="text-lg md:text-xl text-slate-600 max-w-2xl mb-10 leading-relaxed">{config.kopfbereich.hero_text}</p>
         <div class="flex flex-col sm:flex-row gap-4">
-          <a href="#kalender" class="px-8 py-4 bg-[#329A44] hover:bg-[#287a36] text-white font-bold rounded-lg transition-all shadow-md">
-            Aktuelle Termine
-          </a>
-          <a href="#spenden" class="px-8 py-4 bg-white hover:bg-slate-50 text-slate-700 font-bold rounded-lg transition-all border border-slate-300 shadow-sm">
-            Mitmachen
-          </a>
+          <a href="#kalender" class="px-8 py-4 bg-[#329A44] hover:bg-[#287a36] text-white font-bold rounded-lg transition-all shadow-md">Aktuelle Termine</a>
+          <a href="#spenden" class="px-8 py-4 bg-white hover:bg-slate-50 text-slate-700 font-bold rounded-lg border border-slate-300 shadow-sm">Mitmachen</a>
         </div>
       </section>
 
       <section id="kalender" class="max-w-4xl mx-auto px-6 py-16">
-        <div class="flex items-center gap-4 mb-10">
-          <h2 class="text-3xl font-bold text-slate-900">Kalender & Termine</h2>
-          <div class="h-[2px] flex-grow bg-slate-200"></div>
-        </div>
+        <div class="flex items-center gap-4 mb-10"><h2 class="text-3xl font-bold text-slate-900">{config.ueberschriften.kalender}</h2><div class="h-[2px] flex-grow bg-slate-200"></div></div>
+        <div class="space-y-6">
+          {alleTermine.length === 0 ? (
+            <p class="text-slate-500 italic">{config.ueberschriften.kalender_leer}</p>
+          ) : (
+            alleTermine.map(termin => {
+              const isWiederkehrend = !!termin.data.rhythmus;
+              let icsLink = "#";
+              if (!isWiederkehrend && termin.data.exaktes_datum) {
+                const datumStr = termin.data.exaktes_datum.replace(/-/g, '');
+                const icsContent = `BEGIN:VCALENDAR\nVERSION:2.0\nPRODID:-//PIRE Krefeld//DE\nBEGIN:VEVENT\nSUMMARY:${termin.data.titel}\nDESCRIPTION:${termin.data.beschreibung}\nLOCATION:${termin.data.ort}\nDTSTART;VALUE=DATE:${datumStr}\nEND:VEVENT\nEND:VCALENDAR`;
+                icsLink = `data:text/calendar;charset=utf8,${encodeURIComponent(icsContent)}`;
+              }
+              const anzeigeTag = termin.data.exaktes_datum ? termin.data.exaktes_datum.split('-')[2] : '??';
+              const anzeigeMonatNum = termin.data.exaktes_datum ? termin.data.exaktes_datum.split('-')[1] : '??';
 
-        <div class="flex flex-col md:flex-row bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm hover:border-[#F8D800] hover:shadow-md transition-all group">
-          <div class="bg-slate-50 border-b md:border-b-0 md:border-r border-slate-200 p-6 flex flex-col items-center justify-center min-w-[150px]">
-            <span class="text-sm font-bold text-[#E30A17] uppercase tracking-widest">März</span>
-            <span class="text-5xl font-black text-slate-900">20.</span>
-            <span class="text-sm text-slate-500 font-medium mt-1">16:00 Uhr</span>
-          </div>
-          <div class="p-6 md:p-8 flex-grow">
-            <div class="flex justify-between items-start mb-2">
-              <span class="text-[#F8D800] text-xs font-bold uppercase tracking-wider bg-yellow-50 px-3 py-1 rounded-full border border-yellow-100">Jahresevent</span>
-            </div>
-            <h3 class="text-2xl font-bold text-slate-900 mb-2 group-hover:text-[#F8D800] transition-colors">Newroz-Fest Krefeld</h3>
-            <p class="text-slate-600 mb-4">Gemeinsames Feiern des kurdischen Neujahrs. Kultur, Musik und Solidarität für alle Krefelderinnen und Krefelder.</p>
-            <div class="flex items-center text-sm font-bold text-slate-500 gap-2">
-              📍 Vor dem Kaiser-Wilhelm-Museum
-            </div>
-          </div>
+              return (
+                <div class="flex flex-col md:flex-row bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm hover:border-[#F8D800] hover:shadow-md transition-all group">
+                  <div class="bg-slate-50 border-b md:border-b-0 md:border-r border-slate-200 p-6 flex flex-col items-center justify-center min-w-[160px] text-center">
+                    {isWiederkehrend ? (
+                      <span class="text-lg font-black text-slate-900 leading-tight">{termin.data.rhythmus}</span>
+                    ) : (
+                      <>
+                        <span class="text-sm font-bold text-[#E30A17] uppercase tracking-widest">Monat {anzeigeMonatNum}</span>
+                        <span class="text-5xl font-black text-slate-900">{anzeigeTag}</span>
+                      </>
+                    )}
+                    <span class="text-sm text-slate-500 font-medium mt-2">{termin.data.uhrzeit}</span>
+                  </div>
+                  <div class="p-6 md:p-8 flex-grow">
+                    <div class="flex justify-between items-start mb-2"><span class="text-[#F8D800] text-xs font-bold uppercase tracking-wider bg-yellow-50 px-3 py-1 rounded-full border border-yellow-100">{termin.data.eventTyp}</span></div>
+                    <h3 class="text-2xl font-bold text-slate-900 mb-2 group-hover:text-[#F8D800] transition-colors">{termin.data.titel}</h3>
+                    <p class="text-slate-600 mb-4">{termin.data.beschreibung}</p>
+                    <div class="flex flex-wrap items-center gap-4 mt-6">
+                      <div class="text-sm font-bold text-slate-500 flex items-center gap-2">📍 {termin.data.ort}</div>
+                      {!isWiederkehrend && termin.data.exaktes_datum && (
+                        <a href={icsLink} download={`${termin.data.titel}.ics`} class="ml-auto text-xs font-bold bg-slate-100 hover:bg-slate-200 text-slate-700 py-2 px-4 rounded-lg transition-colors flex items-center gap-2">
+                          📅 In den Kalender (.ics)
+                        </a>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              );
+            })
+          )}
         </div>
       </section>
 
-      <section id="angebote" class="bg-slate-100 py-16 border-y border-slate-200">
+      <section id="projekte" class="bg-slate-100 py-16 border-y border-slate-200">
         <div class="max-w-6xl mx-auto px-6">
-          <div class="flex items-center gap-4 mb-10">
-            <h2 class="text-3xl font-bold text-slate-900">Dauerhafte Angebote</h2>
-            <div class="h-[2px] flex-grow bg-slate-300"></div>
+          <div class="flex items-center gap-4 mb-10"><h2 class="text-3xl font-bold text-slate-900">{config.ueberschriften.projekte}</h2><div class="h-[2px] flex-grow bg-slate-300"></div></div>
+          <div class="grid md:grid-cols-2 gap-8 mb-10">
+            {startProjekte.map(projekt => (
+              <a href={`/projekte/${projekt.id}`} class="bg-white border-2 border-slate-200 p-8 rounded-2xl hover:border-[#329A44] hover:shadow-lg transition-all group block">
+                <span class="text-slate-600 text-xs font-bold uppercase tracking-wider bg-slate-100 px-3 py-1 rounded-full mb-4 inline-block">{projekt.data.status}</span>
+                <h3 class="text-2xl font-bold text-slate-900 mb-3 group-hover:text-[#329A44]">{projekt.data.titel}</h3>
+                <p class="text-slate-600 mb-4">{projekt.data.kurzbeschreibung}</p>
+                <span class="text-sm font-bold text-[#329A44]">Details &rarr;</span>
+              </a>
+            ))}
           </div>
-
-          <div class="grid md:grid-cols-2 gap-8">
-            <div class="bg-white border-2 border-[#329A44]/20 p-8 rounded-2xl hover:border-[#329A44] hover:shadow-lg transition-all group shadow-sm cursor-pointer">
-              <div class="flex justify-between items-start mb-4">
-                <span class="text-[#329A44] text-xs font-bold uppercase tracking-wider bg-[#329A44]/10 px-3 py-1 rounded-full">Jede Woche</span>
-              </div>
-              <h3 class="text-2xl font-bold text-slate-900 mb-3 group-hover:text-[#329A44] transition-colors">Kurdischer Online-Sprachkurs</h3>
-              <p class="text-slate-600 mb-4">
-                Kultur erhalten und Sprache leben! Ein anfängerfreundlicher Kurs (Türkisch zu Kurdisch) inklusive deutschsprachiger Nachbereitung.
-              </p>
-              <ul class="text-sm text-slate-700 space-y-2 mb-6 bg-slate-50 p-4 rounded-lg border border-slate-100">
-                <li class="flex justify-between border-b border-slate-200 pb-2"><strong>Wann:</strong> <span>Sonntags 17:30 Uhr (Zoom)</span></li>
-                <li class="flex justify-between border-b border-slate-200 pb-2"><strong>Nachbereitung:</strong> <span>19:30 Uhr (Discord)</span></li>
-                <li class="flex justify-between border-b border-slate-200 pb-2"><strong>Kosten:</strong> <span>Kostenfrei</span></li>
-                <li class="flex justify-between"><strong>Material:</strong> <span>Lehrbuch (10€)</span></li>
-              </ul>
-              <a href="mailto:piresolidarity@tuta.com" class="text-sm font-bold text-[#329A44] flex items-center gap-2">Infos & Anmeldung &rarr;</a>
-            </div>
-          </div>
+          <div class="text-center"><a href="/archiv" class="inline-block px-6 py-3 border border-slate-300 text-slate-600 font-bold rounded-lg hover:bg-slate-200">Aktions-Archiv &rarr;</a></div>
         </div>
       </section>
 
-      <section id="projekte" class="max-w-6xl mx-auto px-6 py-16">
-        <div class="flex items-center gap-4 mb-12">
-          <h2 class="text-3xl font-bold text-slate-900">Projekte & Aktionen</h2>
-          <div class="h-[2px] flex-grow bg-slate-200"></div>
-        </div>
-
-        <div class="grid md:grid-cols-2 gap-8 mb-10">
-          <div class="bg-white border border-slate-200 p-8 rounded-2xl hover:border-slate-400 hover:shadow-lg transition-all group cursor-pointer shadow-sm relative">
-            <div class="flex justify-between items-start mb-4">
-              <span class="text-slate-500 text-xs font-bold uppercase tracking-wider bg-slate-100 px-3 py-1 rounded-full">Abgeschlossene Aktion</span>
-            </div>
-            <h3 class="text-2xl font-bold text-slate-900 mb-3 group-hover:text-slate-600 transition-colors">Redebeitrag: Feministischer Kampftag</h3>
-            <p class="text-slate-600 leading-relaxed mb-6">
-              Auf Einladung des <em>Töchter Kollektivs Krefeld</em> haben wir einen 6,5-minütigen Redebeitrag gehalten. Der Vortrag wurde extrem positiv aufgenommen und hat unsere Brückenarbeit in der Stadt weiter gefestigt.
-            </p>
-            <span class="text-sm font-bold text-slate-500 flex items-center gap-2">Bilder folgen in Kürze</span>
-          </div>
-        </div>
-
-        <div class="text-center">
-          <span class="inline-block px-6 py-3 border border-slate-300 text-slate-600 font-bold rounded-lg hover:bg-slate-100 transition-colors cursor-pointer">
-            Zum Aktions-Archiv &rarr;
-          </span>
-        </div>
-      </section>
-
-      <section id="buendnisse" class="bg-slate-100 py-20">
+      <section id="buendnisse" class="py-20">
         <div class="max-w-6xl mx-auto px-6">
-          <div class="flex items-center gap-4 mb-12">
-            <h2 class="text-3xl font-bold text-slate-900">Bündnisarbeit & Netzwerk</h2>
-            <div class="h-[2px] flex-grow bg-slate-300"></div>
-          </div>
-          <p class="text-slate-600 mb-10 max-w-3xl text-lg">
-            Echte gesellschaftliche Arbeit funktioniert nur gemeinsam. Wir sind stolz auf den Austausch und die Solidarität mit unseren Partnern und befreundeten Organisationen in der Region.
-          </p>
-          <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 text-center">
-            <div class="bg-white border border-slate-200 p-6 rounded-xl flex flex-col items-center justify-center gap-3 hover:border-[#F8D800] hover:shadow-md transition-all cursor-pointer">
-              <div class="w-12 h-12 bg-slate-100 rounded-full flex items-center justify-center text-slate-400 font-bold text-xs">LOGO</div>
-              <span class="text-slate-700 font-bold text-sm">Töchter Kollektiv Krefeld</span>
-            </div>
-            <div class="bg-white border border-slate-200 p-6 rounded-xl flex flex-col items-center justify-center gap-3 hover:border-[#F8D800] hover:shadow-md transition-all cursor-pointer">
-              <div class="w-12 h-12 bg-slate-100 rounded-full flex items-center justify-center text-slate-400 font-bold text-xs">LOGO</div>
-              <span class="text-slate-700 font-bold text-sm">Deutsch-Kurdischer Freundschaftsverein</span>
-            </div>
-            <div class="bg-white border border-slate-200 p-6 rounded-xl flex flex-col items-center justify-center gap-3 hover:border-[#F8D800] hover:shadow-md transition-all cursor-pointer">
-              <div class="w-12 h-12 bg-slate-100 rounded-full flex items-center justify-center text-slate-400 font-bold text-xs">LOGO</div>
-              <span class="text-slate-700 font-bold text-sm">Die Linke Krefeld</span>
-            </div>
+          <div class="flex items-center gap-4 mb-12"><h2 class="text-3xl font-bold text-slate-900">{config.ueberschriften.buendnisse}</h2><div class="h-[2px] flex-grow bg-slate-300"></div></div>
+          <p class="text-slate-600 mb-10 max-w-3xl text-lg">{config.ueberschriften.buendnisse_text}</p>
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+            {alleBuendnisse.map(buendnis => (
+              <a href={buendnis.data.link || '#'} target="_blank" rel="noopener noreferrer" class="bg-white border border-slate-200 p-6 rounded-xl flex flex-col items-center justify-center gap-4 hover:border-[#329A44] hover:shadow-md transition-all group text-center">
+                {buendnis.data.logo ? <img src={buendnis.data.logo} class="h-16 object-contain grayscale group-hover:grayscale-0" /> : <div class="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center text-slate-400 font-bold text-xs">LOGO</div>}
+                <span class="text-slate-700 font-bold text-sm group-hover:text-[#329A44]">{buendnis.data.name}</span>
+              </a>
+            ))}
           </div>
         </div>
       </section>
 
-      <section id="spenden" class="max-w-6xl mx-auto px-6 py-20">
-        <div class="flex items-center gap-4 mb-12">
-          <h2 class="text-3xl font-bold text-slate-900">Unterstützen & Spenden</h2>
-          <div class="h-[2px] flex-grow bg-slate-200"></div>
-        </div>
-        <div class="grid md:grid-cols-3 gap-8">
-          <div class="md:col-span-2 bg-white p-8 rounded-2xl border border-slate-200 shadow-sm">
+      <section id="spenden" class="bg-slate-100 border-y border-slate-200 py-20">
+        <div class="max-w-6xl mx-auto px-6">
+          <div class="flex items-center gap-4 mb-12"><h2 class="text-3xl font-bold text-slate-900">{config.ueberschriften.spenden}</h2><div class="h-[2px] flex-grow bg-slate-300"></div></div>
+          
+          <div class="bg-white p-8 md:p-12 rounded-2xl shadow-sm border border-slate-200 mb-8">
             <h3 class="text-2xl font-bold text-slate-900 mb-4">Gemeinsam Brücken bauen.</h3>
-            <p class="text-slate-600 mb-6">
-              Da wir uns aktuell in der Gründung befinden, sind finanzielle Zuwendungen juristisch als Schenkungen zu betrachten. Wir finanzieren damit Räume, Material für Aktionen und Bildungsarbeit für alle.
-            </p>
-            <div class="flex flex-col sm:flex-row gap-4">
-              <button class="bg-[#F8D800] text-slate-900 font-bold px-6 py-3 rounded-lg hover:bg-yellow-400 transition-colors shadow-sm">Spenden via Open Collective</button>
-              <button class="bg-white text-slate-700 font-bold px-6 py-3 rounded-lg border border-slate-300 hover:bg-slate-50 transition-colors shadow-sm">Monatlich via Liberapay</button>
+            <p class="text-slate-600 mb-8 max-w-3xl text-lg">{config.spenden.text}</p>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              {config.spenden.opencollective && (
+                <a href={config.spenden.opencollective} target="_blank" class="flex flex-col justify-center items-center text-center bg-[#F8D800] text-slate-900 font-bold px-4 py-4 rounded-xl hover:bg-yellow-400 transition-colors shadow-sm">
+                  <span>Via Open Collective</span>
+                </a>
+              )}
+              {config.spenden.paypal && (
+                <a href={config.spenden.paypal} target="_blank" class="flex flex-col justify-center items-center text-center bg-[#00457C] text-white font-bold px-4 py-4 rounded-xl hover:bg-[#00335c] transition-colors shadow-sm">
+                  <span>Via PayPal</span>
+                </a>
+              )}
+              {config.spenden.liberapay && (
+                <a href={config.spenden.liberapay} target="_blank" class="flex flex-col justify-center items-center text-center bg-[#F6C915] text-slate-900 font-bold px-4 py-4 rounded-xl hover:bg-yellow-500 transition-colors shadow-sm">
+                  <span>Via Liberapay</span>
+                </a>
+              )}
+              {config.spenden.iban && (
+                <div class="flex flex-col justify-center items-center bg-slate-50 border border-slate-200 p-4 rounded-xl text-center">
+                  <span class="block text-xs text-slate-500 uppercase font-bold mb-1">Banküberweisung</span>
+                  <code class="text-slate-800 font-mono font-bold text-sm">{config.spenden.iban}</code>
+                </div>
+              )}
             </div>
           </div>
-          <div class="bg-[#329A44]/5 p-8 rounded-2xl border border-[#329A44]/20">
-            <h3 class="text-xl font-bold text-slate-900 mb-4">Aktiv werden</h3>
-            <p class="text-slate-600 text-sm mb-6">Du möchtest dich einbringen oder hast Sachspenden? Schreib uns! Ein Kontaktformular folgt in Kürze.</p>
-            <a href="mailto:piresolidarity@tuta.com" class="block text-center w-full bg-[#329A44] text-white font-bold px-4 py-3 rounded-lg hover:bg-[#287a36] transition-colors shadow-sm">E-Mail schreiben</a>
+
+          <div class="bg-[#329A44] p-8 rounded-2xl text-white text-center">
+            <h3 class="text-xl font-bold mb-2">Aktiv werden / Sachspenden</h3>
+            <p class="text-white/80 mb-6">Du möchtest dich einbringen? Schreib uns direkt an!</p>
+            <a href={`mailto:${config.footer.kontakt_email}`} class="inline-block bg-white text-[#329A44] font-bold px-8 py-3 rounded-lg hover:bg-slate-50 transition-colors shadow-sm">E-Mail schreiben</a>
           </div>
         </div>
       </section>
 
-      <section id="kontakt" class="bg-slate-900 pt-20 pb-10">
+      <section id="kontakt" class="bg-slate-900 pt-20 pb-8">
         <div class="max-w-6xl mx-auto px-6">
           <div class="grid md:grid-cols-2 gap-12 mb-16">
             <div>
               <h2 class="text-2xl font-bold text-white mb-6">Kontakt</h2>
-              <p class="text-slate-400 mb-6">Schreib uns verschlüsselt oder trete über Social Media mit uns in Kontakt. Wir versuchen, so schnell wie möglich zu antworten.</p>
               <ul class="space-y-3 text-slate-400">
-                <li><strong class="text-white">Email:</strong> piresolidarity@tuta.com</li>
+                <li><strong class="text-white">Email:</strong> {config.footer.kontakt_email}</li>
                 <li><strong class="text-white">Standort:</strong> Krefeld</li>
               </ul>
             </div>
             <div class="bg-slate-800 p-6 rounded-xl border border-slate-700">
               <h3 class="font-bold text-white mb-4">Werte-Statement</h3>
-              <p class="text-sm text-slate-400 leading-relaxed">
-                Unsere Arbeit basiert auf bedingungsloser Solidarität, Demokratieförderung und intersektionalem Feminismus. Wir tolerieren keine Form von Rassismus, Antisemitismus, Sexismus oder Queerfeindlichkeit.
-              </p>
+              <p class="text-sm text-slate-400 leading-relaxed">{config.footer.werte_statement}</p>
             </div>
+          </div>
+          
+          <div class="border-t border-slate-800 pt-8 mt-8 text-center">
+            <p class="text-xs text-slate-500">{config.footer.copyright_text}</p>
           </div>
         </div>
       </section>

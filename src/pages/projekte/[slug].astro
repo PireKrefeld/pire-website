@@ -1,0 +1,42 @@
+---
+import { getCollection, render } from 'astro:content';
+import '../../styles/global.css';
+
+export async function getStaticPaths() {
+  const alleProjekte = await getCollection('projekte');
+  return alleProjekte.map(projekt => ({
+    params: { slug: projekt.id },
+    props: { projekt },
+  }));
+}
+
+const { projekt } = Astro.props;
+const { Content } = await render(projekt);
+---
+
+<html lang="de" class="scroll-smooth">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{projekt.data.titel} | PIRE Krefeld</title>
+  </head>
+  <body class="bg-slate-50 text-slate-800 font-sans antialiased">
+    
+    <header class="bg-white border-b border-slate-200 py-4 px-6 sticky top-0 z-50">
+      <div class="max-w-4xl mx-auto flex items-center justify-between">
+        <a href="/" class="font-bold text-slate-900 hover:text-[#329A44] transition-colors">&larr; Zurück</a>
+        <span class="text-xs font-black uppercase tracking-widest text-slate-400">{projekt.data.status}</span>
+      </div>
+    </header>
+
+    <main class="max-w-3xl mx-auto px-6 py-16">
+      <h1 class="text-4xl md:text-5xl font-black text-slate-900 mb-6">{projekt.data.titel}</h1>
+      <p class="text-xl text-slate-600 mb-12 border-b border-slate-200 pb-8">{projekt.data.kurzbeschreibung}</p>
+
+      <article class="prose prose-lg prose-slate prose-a:text-[#329A44] max-w-none">
+        <Content />
+      </article>
+
+    </main>
+  </body>
+</html>
