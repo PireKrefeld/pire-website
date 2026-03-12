@@ -1,19 +1,12 @@
 import { defineConfig } from 'astro/config';
-import tailwindcss from '@tailwindcss/vite';
+import cloudflare from '@astrojs/cloudflare';
 import keystatic from '@keystatic/astro';
 import react from '@astrojs/react';
 import markdoc from '@astrojs/markdoc';
-import cloudflare from '@astrojs/cloudflare'; 
+import tailwindcss from '@tailwindcss/vite';
 
 export default defineConfig({
-  // KEIN output-Befehl! Du hast recht, Astro 5 macht das im Standard (static) perfekt.
-  adapter: cloudflare(), // Der Adapter MUSS rein, das hat den Fehler gerade verursacht.
-  integrations: [
-    react(),
-    keystatic(),
-    markdoc()
-  ],
-  vite: {
-    plugins: [tailwindcss()]
-  }
+  adapter: cloudflare(),
+  integrations: [react(), keystatic(), markdoc()],
+  vite: { plugins: [tailwindcss()] }
 });
