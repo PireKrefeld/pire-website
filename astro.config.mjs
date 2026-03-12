@@ -1,14 +1,13 @@
-// @ts-check
 import { defineConfig } from 'astro/config';
 import tailwindcss from '@tailwindcss/vite';
 import keystatic from '@keystatic/astro';
 import react from '@astrojs/react';
 import markdoc from '@astrojs/markdoc';
-import cloudflare from '@astrojs/cloudflare'; // <-- Der Übersetzer für den Server
+import cloudflare from '@astrojs/cloudflare'; 
 
 export default defineConfig({
-  // WIR LASSEN DAS OUTPUT FELD WEG! Astro macht das jetzt vollautomatisch richtig.
-  adapter: cloudflare(), // <-- Das ist das einzige Puzzleteil, das Cloudflare gefehlt hat
+  output: 'server', // <-- DER HOLZHAMMER: Zwingt Astro, die Login-Tür stehen zu lassen!
+  adapter: cloudflare(), 
   integrations: [
     react(),
     keystatic(),
