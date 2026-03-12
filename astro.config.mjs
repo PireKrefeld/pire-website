@@ -6,12 +6,8 @@ import markdoc from '@astrojs/markdoc';
 import cloudflare from '@astrojs/cloudflare'; 
 
 export default defineConfig({
-  // Wir lassen output weg, aber konfigurieren den Adapter direkt
-  adapter: cloudflare({
-    platformProxy: {
-      enabled: true,
-    },
-  }),
+  // KEIN output: 'server' oder 'hybrid'. Astro 5 macht das von selbst richtig.
+  adapter: cloudflare(), 
   integrations: [
     react(),
     keystatic(),
