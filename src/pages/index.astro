@@ -6,87 +6,155 @@ import '../styles/global.css';
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>PIRE Krefeld | Solidarische Bündnisse</title>
+    <title>PIRE Krefeld | Solidarische Brücken bauen</title>
+    <style>
+      /* Ticker animiert für Handys */
+      @media (max-width: 768px) {
+        .ticker-wrap { width: 100%; overflow: hidden; white-space: nowrap; }
+        .ticker-text { 
+          display: inline-block; 
+          padding-left: 100%; 
+          animation: marquee 20s linear infinite; 
+        }
+      }
+      @keyframes marquee {
+        0%   { transform: translate(0, 0); }
+        100% { transform: translate(-100%, 0); }
+      }
+    </style>
   </head>
   
   <body class="bg-slate-50 text-slate-800 font-sans antialiased selection:bg-[#329A44] selection:text-white">
     
-    <header class="fixed w-full top-0 z-50 bg-white/90 backdrop-blur-md border-b border-slate-200 shadow-sm">
-      <div class="max-w-6xl mx-auto px-6 py-4 flex justify-center md:justify-end items-center">
-        <nav class="flex gap-6 md:gap-8 text-sm md:text-base font-semibold text-slate-600">
-          <a href="#projekte" class="hover:text-[#329A44] transition-colors">Projekte</a>
-          <a href="#buendnisse" class="hover:text-[#329A44] transition-colors">Bündnisse</a>
-          <a href="#spenden" class="hover:text-[#329A44] transition-colors">Unterstützen</a>
-          <a href="#kontakt" class="hover:text-[#329A44] transition-colors">Kontakt</a>
-        </nav>
-      </div>
-    </header>
-
-    <main class="pt-24">
+    <header class="fixed w-full top-0 z-50 flex flex-col shadow-sm">
       
-      <section class="max-w-6xl mx-auto px-6 py-16 md:py-24 flex flex-col items-center text-center">
-        
-        <img src="/logo.png" alt="PIRE Krefeld Logo" class="w-72 md:w-96 mb-12 drop-shadow-xl" />
-        
-        <h1 class="text-4xl md:text-6xl font-extrabold text-slate-900 tracking-tight mb-6 leading-tight">
-          Krefelds Brücke für <br />
-          <span class="text-[#329A44]">solidarische Bündnisse</span>
-        </h1>
-        
-        <p class="text-lg md:text-xl text-slate-600 max-w-2xl mb-10 leading-relaxed">
-          Wir vereinen linke Kräfte, stärken kurdische Solidarität und schaffen emanzipatorische Räume in unserer Stadt. Unangreifbar, vernetzt und laut.
-        </p>
-        
-        <div class="flex flex-col sm:flex-row gap-4">
-          <a href="#projekte" class="px-8 py-4 bg-[#329A44] hover:bg-[#287a36] text-white font-bold rounded-lg transition-all shadow-md hover:shadow-lg">
-            Unsere Projekte
-          </a>
-          <a href="#spenden" class="px-8 py-4 bg-white hover:bg-slate-50 text-slate-700 font-bold rounded-lg transition-all border border-slate-300 shadow-sm hover:shadow-md">
-            Mitmach-Formular
-          </a>
+      <div class="bg-white/95 backdrop-blur-md border-b border-slate-200">
+        <div class="max-w-6xl mx-auto px-6 py-4 flex justify-center items-center">
+          <nav class="flex gap-6 md:gap-10 text-sm md:text-base font-semibold text-slate-600">
+            <a href="#kalender" class="hover:text-[#329A44] transition-colors">Kalender</a>
+            <a href="#angebote" class="hover:text-[#329A44] transition-colors">Angebote</a>
+            <a href="#projekte" class="hover:text-[#329A44] transition-colors">Projekte</a>
+            <a href="#spenden" class="hover:text-[#329A44] transition-colors">Unterstützen</a>
+          </nav>
         </div>
-      </section>
+      </div>
 
-      <section class="border-y border-red-100 bg-red-50/50">
-        <div class="max-w-6xl mx-auto px-6 py-4 flex items-center gap-4">
-          <span class="text-[#E30A17] font-bold uppercase tracking-wider text-sm flex-shrink-0 flex items-center gap-2">
+      <div class="bg-red-50/95 backdrop-blur-md border-b border-red-100 flex items-center py-2">
+        <div class="max-w-6xl mx-auto px-6 w-full flex items-center">
+          <span class="text-[#E30A17] font-bold uppercase tracking-wider text-xs md:text-sm flex items-center gap-2 pr-4 shrink-0">
             <span class="w-2 h-2 rounded-full bg-[#E30A17] animate-pulse"></span>
             Aktuelles:
           </span>
-          <p class="text-sm text-slate-700 truncate">Vorbereitungen für den Frauenstreik Krefeld laufen auf Hochtouren. Nächstes offenes Treffen am Freitag.</p>
+          
+          <div class="ticker-wrap flex-grow md:hidden">
+            <div class="ticker-text text-xs md:text-sm text-slate-800 font-medium">
+              +++ EILMELDUNG: Gemeinsames Newroz-Fest am 20.03. um 16:00 Uhr vor dem Kaiser-Wilhelm-Museum! Feiert mit uns! +++
+            </div>
+          </div>
+          <div class="hidden md:block flex-grow text-sm text-slate-800 font-medium truncate">
+            +++ EILMELDUNG: Gemeinsames Newroz-Fest am 20.03. um 16:00 Uhr vor dem Kaiser-Wilhelm-Museum! Feiert mit uns! +++
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="pt-36">
+      
+      <section class="max-w-6xl mx-auto px-6 pb-16 md:pb-24 flex flex-col items-center text-center">
+        <img src="/logo.png" alt="PIRE Krefeld Logo" class="w-72 md:w-96 mb-12 drop-shadow-xl" />
+        <h1 class="text-4xl md:text-6xl font-extrabold text-slate-900 tracking-tight mb-6 leading-tight">
+          Krefelds Brücke für <br />
+          <span class="text-[#329A44]">Zusammenhalt & Solidarität</span>
+        </h1>
+        <p class="text-lg md:text-xl text-slate-600 max-w-2xl mb-10 leading-relaxed">
+          Wir vereinen die demokratische Zivilgesellschaft, stärken kurdische Kultur und schaffen Räume für Dialog. Ohne Spaltung, ohne Vorurteile.
+        </p>
+        <div class="flex flex-col sm:flex-row gap-4">
+          <a href="#kalender" class="px-8 py-4 bg-[#329A44] hover:bg-[#287a36] text-white font-bold rounded-lg transition-all shadow-md">
+            Aktuelle Termine
+          </a>
+          <a href="#spenden" class="px-8 py-4 bg-white hover:bg-slate-50 text-slate-700 font-bold rounded-lg transition-all border border-slate-300 shadow-sm">
+            Mitmachen
+          </a>
         </div>
       </section>
 
-      <section id="projekte" class="max-w-6xl mx-auto px-6 py-20">
-        <div class="flex items-center gap-4 mb-12">
-          <h2 class="text-3xl font-bold text-slate-900">Unsere Projekte</h2>
+      <section id="kalender" class="max-w-4xl mx-auto px-6 py-16">
+        <div class="flex items-center gap-4 mb-10">
+          <h2 class="text-3xl font-bold text-slate-900">Kalender & Termine</h2>
           <div class="h-[2px] flex-grow bg-slate-200"></div>
         </div>
 
-        <div class="grid md:grid-cols-2 gap-8">
-          
-          <div class="bg-white border border-slate-200 p-8 rounded-2xl hover:border-[#329A44] hover:shadow-lg transition-all group">
-            <div class="flex justify-between items-start mb-4">
-              <span class="text-[#329A44] text-xs font-bold uppercase tracking-wider bg-[#329A44]/10 px-3 py-1 rounded-full">Laufend</span>
+        <div class="flex flex-col md:flex-row bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm hover:border-[#F8D800] hover:shadow-md transition-all group">
+          <div class="bg-slate-50 border-b md:border-b-0 md:border-r border-slate-200 p-6 flex flex-col items-center justify-center min-w-[150px]">
+            <span class="text-sm font-bold text-[#E30A17] uppercase tracking-widest">März</span>
+            <span class="text-5xl font-black text-slate-900">20.</span>
+            <span class="text-sm text-slate-500 font-medium mt-1">16:00 Uhr</span>
+          </div>
+          <div class="p-6 md:p-8 flex-grow">
+            <div class="flex justify-between items-start mb-2">
+              <span class="text-[#F8D800] text-xs font-bold uppercase tracking-wider bg-yellow-50 px-3 py-1 rounded-full border border-yellow-100">Jahresevent</span>
             </div>
-            <h3 class="text-2xl font-bold text-slate-900 mb-3 group-hover:text-[#329A44] transition-colors">Frauenstreik Bündnis</h3>
-            <p class="text-slate-600 leading-relaxed mb-6">
-              Organisation und Vernetzung für den feministischen Kampftag. Wir streiken für Sichtbarkeit, Rechte und gegen patriarchale Gewalt.
-            </p>
-            <a href="#spenden" class="text-sm font-bold text-[#329A44] flex items-center gap-2">Projekt unterstützen &rarr;</a>
+            <h3 class="text-2xl font-bold text-slate-900 mb-2 group-hover:text-[#F8D800] transition-colors">Newroz-Fest Krefeld</h3>
+            <p class="text-slate-600 mb-4">Gemeinsames Feiern des kurdischen Neujahrs. Kultur, Musik und Solidarität für alle Krefelderinnen und Krefelder.</p>
+            <div class="flex items-center text-sm font-bold text-slate-500 gap-2">
+              📍 Vor dem Kaiser-Wilhelm-Museum
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="angebote" class="bg-slate-100 py-16 border-y border-slate-200">
+        <div class="max-w-6xl mx-auto px-6">
+          <div class="flex items-center gap-4 mb-10">
+            <h2 class="text-3xl font-bold text-slate-900">Dauerhafte Angebote</h2>
+            <div class="h-[2px] flex-grow bg-slate-300"></div>
           </div>
 
-          <div class="bg-white border border-slate-200 p-8 rounded-2xl hover:border-[#329A44] hover:shadow-lg transition-all group">
-            <div class="flex justify-between items-start mb-4">
-              <span class="text-[#329A44] text-xs font-bold uppercase tracking-wider bg-[#329A44]/10 px-3 py-1 rounded-full">Laufend</span>
+          <div class="grid md:grid-cols-2 gap-8">
+            <div class="bg-white border-2 border-[#329A44]/20 p-8 rounded-2xl hover:border-[#329A44] hover:shadow-lg transition-all group shadow-sm cursor-pointer">
+              <div class="flex justify-between items-start mb-4">
+                <span class="text-[#329A44] text-xs font-bold uppercase tracking-wider bg-[#329A44]/10 px-3 py-1 rounded-full">Jede Woche</span>
+              </div>
+              <h3 class="text-2xl font-bold text-slate-900 mb-3 group-hover:text-[#329A44] transition-colors">Kurdischer Online-Sprachkurs</h3>
+              <p class="text-slate-600 mb-4">
+                Kultur erhalten und Sprache leben! Ein anfängerfreundlicher Kurs (Türkisch zu Kurdisch) inklusive deutschsprachiger Nachbereitung.
+              </p>
+              <ul class="text-sm text-slate-700 space-y-2 mb-6 bg-slate-50 p-4 rounded-lg border border-slate-100">
+                <li class="flex justify-between border-b border-slate-200 pb-2"><strong>Wann:</strong> <span>Sonntags 17:30 Uhr (Zoom)</span></li>
+                <li class="flex justify-between border-b border-slate-200 pb-2"><strong>Nachbereitung:</strong> <span>19:30 Uhr (Discord)</span></li>
+                <li class="flex justify-between border-b border-slate-200 pb-2"><strong>Kosten:</strong> <span>Kostenfrei</span></li>
+                <li class="flex justify-between"><strong>Material:</strong> <span>Lehrbuch (10€)</span></li>
+              </ul>
+              <a href="mailto:piresolidarity@tuta.com" class="text-sm font-bold text-[#329A44] flex items-center gap-2">Infos & Anmeldung &rarr;</a>
             </div>
-            <h3 class="text-2xl font-bold text-slate-900 mb-3 group-hover:text-[#329A44] transition-colors">Kurdischer Online-Sprachkurs</h3>
-            <p class="text-slate-600 leading-relaxed mb-6">
-              Gemeinsames Erlernen der kurdischen Sprache im digitalen Raum. Kultur erhalten, Sprache leben, Barrieren abbauen.
-            </p>
-            <a href="#spenden" class="text-sm font-bold text-[#329A44] flex items-center gap-2">Projekt unterstützen &rarr;</a>
           </div>
+        </div>
+      </section>
 
+      <section id="projekte" class="max-w-6xl mx-auto px-6 py-16">
+        <div class="flex items-center gap-4 mb-12">
+          <h2 class="text-3xl font-bold text-slate-900">Projekte & Aktionen</h2>
+          <div class="h-[2px] flex-grow bg-slate-200"></div>
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-8 mb-10">
+          <div class="bg-white border border-slate-200 p-8 rounded-2xl hover:border-slate-400 hover:shadow-lg transition-all group cursor-pointer shadow-sm relative">
+            <div class="flex justify-between items-start mb-4">
+              <span class="text-slate-500 text-xs font-bold uppercase tracking-wider bg-slate-100 px-3 py-1 rounded-full">Abgeschlossene Aktion</span>
+            </div>
+            <h3 class="text-2xl font-bold text-slate-900 mb-3 group-hover:text-slate-600 transition-colors">Redebeitrag: Feministischer Kampftag</h3>
+            <p class="text-slate-600 leading-relaxed mb-6">
+              Auf Einladung des <em>Töchter Kollektivs Krefeld</em> haben wir einen 6,5-minütigen Redebeitrag gehalten. Der Vortrag wurde extrem positiv aufgenommen und hat unsere Brückenarbeit in der Stadt weiter gefestigt.
+            </p>
+            <span class="text-sm font-bold text-slate-500 flex items-center gap-2">Bilder folgen in Kürze</span>
+          </div>
+        </div>
+
+        <div class="text-center">
+          <span class="inline-block px-6 py-3 border border-slate-300 text-slate-600 font-bold rounded-lg hover:bg-slate-100 transition-colors cursor-pointer">
+            Zum Aktions-Archiv &rarr;
+          </span>
         </div>
       </section>
 
@@ -96,16 +164,22 @@ import '../styles/global.css';
             <h2 class="text-3xl font-bold text-slate-900">Bündnisarbeit & Netzwerk</h2>
             <div class="h-[2px] flex-grow bg-slate-300"></div>
           </div>
-          
           <p class="text-slate-600 mb-10 max-w-3xl text-lg">
-            Solidarität bedeutet für uns Zusammenhalt über die eigenen Grenzen hinaus. Wir vernetzen uns aktiv mit anderen emanzipatorischen Gruppen in Krefeld und Umgebung.
+            Echte gesellschaftliche Arbeit funktioniert nur gemeinsam. Wir sind stolz auf den Austausch und die Solidarität mit unseren Partnern und befreundeten Organisationen in der Region.
           </p>
-
-          <div class="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
-            <div class="bg-white border border-slate-200 p-6 rounded-xl text-slate-500 font-bold hover:text-slate-900 hover:border-[#F8D800] hover:shadow-md transition-all cursor-pointer">Antifa Krefeld</div>
-            <div class="bg-white border border-slate-200 p-6 rounded-xl text-slate-500 font-bold hover:text-slate-900 hover:border-[#F8D800] hover:shadow-md transition-all cursor-pointer">FFF Krefeld</div>
-            <div class="bg-white border border-slate-200 p-6 rounded-xl text-slate-500 font-bold hover:text-slate-900 hover:border-[#F8D800] hover:shadow-md transition-all cursor-pointer">Seebrücke</div>
-            <div class="bg-white border border-slate-200 p-6 rounded-xl text-slate-500 font-bold hover:text-slate-900 hover:border-[#F8D800] hover:shadow-md transition-all cursor-pointer">Kurdischer Verein</div>
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 text-center">
+            <div class="bg-white border border-slate-200 p-6 rounded-xl flex flex-col items-center justify-center gap-3 hover:border-[#F8D800] hover:shadow-md transition-all cursor-pointer">
+              <div class="w-12 h-12 bg-slate-100 rounded-full flex items-center justify-center text-slate-400 font-bold text-xs">LOGO</div>
+              <span class="text-slate-700 font-bold text-sm">Töchter Kollektiv Krefeld</span>
+            </div>
+            <div class="bg-white border border-slate-200 p-6 rounded-xl flex flex-col items-center justify-center gap-3 hover:border-[#F8D800] hover:shadow-md transition-all cursor-pointer">
+              <div class="w-12 h-12 bg-slate-100 rounded-full flex items-center justify-center text-slate-400 font-bold text-xs">LOGO</div>
+              <span class="text-slate-700 font-bold text-sm">Deutsch-Kurdischer Freundschaftsverein</span>
+            </div>
+            <div class="bg-white border border-slate-200 p-6 rounded-xl flex flex-col items-center justify-center gap-3 hover:border-[#F8D800] hover:shadow-md transition-all cursor-pointer">
+              <div class="w-12 h-12 bg-slate-100 rounded-full flex items-center justify-center text-slate-400 font-bold text-xs">LOGO</div>
+              <span class="text-slate-700 font-bold text-sm">Die Linke Krefeld</span>
+            </div>
           </div>
         </div>
       </section>
@@ -115,31 +189,21 @@ import '../styles/global.css';
           <h2 class="text-3xl font-bold text-slate-900">Unterstützen & Spenden</h2>
           <div class="h-[2px] flex-grow bg-slate-200"></div>
         </div>
-
         <div class="grid md:grid-cols-3 gap-8">
           <div class="md:col-span-2 bg-white p-8 rounded-2xl border border-slate-200 shadow-sm">
-            <h3 class="text-2xl font-bold text-slate-900 mb-4">Wir sind ehrenamtlich.</h3>
+            <h3 class="text-2xl font-bold text-slate-900 mb-4">Gemeinsam Brücken bauen.</h3>
             <p class="text-slate-600 mb-6">
-              Da wir uns aktuell in der Gründung befinden, sind finanzielle Zuwendungen juristisch als Schenkungen zu betrachten. Wir finanzieren damit Räume, Material für Aktionen und Bildungsarbeit.
+              Da wir uns aktuell in der Gründung befinden, sind finanzielle Zuwendungen juristisch als Schenkungen zu betrachten. Wir finanzieren damit Räume, Material für Aktionen und Bildungsarbeit für alle.
             </p>
             <div class="flex flex-col sm:flex-row gap-4">
-              <button class="bg-[#F8D800] text-slate-900 font-bold px-6 py-3 rounded-lg hover:bg-yellow-400 transition-colors shadow-sm">
-                Spenden via Open Collective
-              </button>
-              <button class="bg-white text-slate-700 font-bold px-6 py-3 rounded-lg border border-slate-300 hover:bg-slate-50 transition-colors shadow-sm">
-                Monatlich via Liberapay
-              </button>
+              <button class="bg-[#F8D800] text-slate-900 font-bold px-6 py-3 rounded-lg hover:bg-yellow-400 transition-colors shadow-sm">Spenden via Open Collective</button>
+              <button class="bg-white text-slate-700 font-bold px-6 py-3 rounded-lg border border-slate-300 hover:bg-slate-50 transition-colors shadow-sm">Monatlich via Liberapay</button>
             </div>
           </div>
-
           <div class="bg-[#329A44]/5 p-8 rounded-2xl border border-[#329A44]/20">
             <h3 class="text-xl font-bold text-slate-900 mb-4">Aktiv werden</h3>
-            <p class="text-slate-600 text-sm mb-6">
-              Du möchtest dich einbringen oder hast Sachspenden (Technik, Materialien)? Schreib uns direkt an!
-            </p>
-            <a href="#kontakt" class="block text-center w-full bg-[#329A44] text-white font-bold px-4 py-3 rounded-lg hover:bg-[#287a36] transition-colors shadow-sm">
-              Mitmach-Formular
-            </a>
+            <p class="text-slate-600 text-sm mb-6">Du möchtest dich einbringen oder hast Sachspenden? Schreib uns! Ein Kontaktformular folgt in Kürze.</p>
+            <a href="mailto:piresolidarity@tuta.com" class="block text-center w-full bg-[#329A44] text-white font-bold px-4 py-3 rounded-lg hover:bg-[#287a36] transition-colors shadow-sm">E-Mail schreiben</a>
           </div>
         </div>
       </section>
@@ -147,7 +211,6 @@ import '../styles/global.css';
       <section id="kontakt" class="bg-slate-900 pt-20 pb-10">
         <div class="max-w-6xl mx-auto px-6">
           <div class="grid md:grid-cols-2 gap-12 mb-16">
-            
             <div>
               <h2 class="text-2xl font-bold text-white mb-6">Kontakt</h2>
               <p class="text-slate-400 mb-6">Schreib uns verschlüsselt oder trete über Social Media mit uns in Kontakt. Wir versuchen, so schnell wie möglich zu antworten.</p>
@@ -156,28 +219,16 @@ import '../styles/global.css';
                 <li><strong class="text-white">Standort:</strong> Krefeld</li>
               </ul>
             </div>
-
             <div class="bg-slate-800 p-6 rounded-xl border border-slate-700">
               <h3 class="font-bold text-white mb-4">Werte-Statement</h3>
               <p class="text-sm text-slate-400 leading-relaxed">
-                Unsere Arbeit basiert auf bedingungsloser Solidarität, Antifaschismus und intersektionalem Feminismus. Wir tolerieren keine Form von Rassismus, Antisemitismus, Sexismus oder Queerfeindlichkeit.
+                Unsere Arbeit basiert auf bedingungsloser Solidarität, Demokratieförderung und intersektionalem Feminismus. Wir tolerieren keine Form von Rassismus, Antisemitismus, Sexismus oder Queerfeindlichkeit.
               </p>
-            </div>
-
-          </div>
-
-          <div class="border-t border-slate-800 pt-8 flex flex-col md:flex-row justify-between items-center text-xs text-slate-500">
-            <p>&copy; 2026 PIRE Krefeld. Alle Rechte vorbehalten.</p>
-            <div class="flex gap-4 mt-4 md:mt-0">
-              <a href="#" class="hover:text-white transition-colors">Impressum</a>
-              <a href="#" class="hover:text-white transition-colors">Datenschutz</a>
-              <span class="text-[#329A44]">Datenschutz-Priorität: Keine Tracker.</span>
             </div>
           </div>
         </div>
       </section>
 
     </main>
-
   </body>
 </html>
