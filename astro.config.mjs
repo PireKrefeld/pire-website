@@ -6,8 +6,8 @@ import markdoc from '@astrojs/markdoc';
 import cloudflare from '@astrojs/cloudflare'; 
 
 export default defineConfig({
-  // KEIN output: 'server' oder 'hybrid'. Astro 5 macht das von selbst richtig.
-  adapter: cloudflare(), 
+  output: 'server', // <-- DER MOTOR MUSS REIN, DAMIT DER WÄCHTER GEBAUT WIRD!
+  adapter: cloudflare(), // <-- DER ADAPTER VERHINDERT DEN CRASH!
   integrations: [
     react(),
     keystatic(),
