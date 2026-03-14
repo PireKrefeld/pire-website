@@ -1,17 +1,38 @@
 {
   "kopfbereich": {
-    "hero_headline": "Krefelds Brücke für Zusammenhalt & Solidarität"
+    "weisses_logo": false,
+    "hero_headline": "Krefelds Brücke für<br><span class=\"text-[#329A44]\">Zusammenhalt & Solidarität</span>",
+    "hero_text": "Wir bringen Menschen zusammen, fördern kulturellen Austausch und schaffen Räume für Begegnung und Dialog. Ausgehend von unseren kurdisch-deutschen Wurzeln setzen wir uns für ein respektvolles Miteinander, kulturelle Vielfalt und eine lebendige Zivilgesellschaft ein.\n\nUnser Verein steht allen offen – unabhängig von Herkunft, Hintergrund oder Perspektive. Uns verbindet der Wunsch, voneinander zu lernen, gemeinsam aktiv zu werden und Brücken zwischen unterschiedlichen Menschen und Erfahrungen zu bauen.\n\nDurch gemeinsame Projekte, Veranstaltungen und Engagement möchten wir Austausch ermöglichen, Zusammenarbeit stärken und einen Ort schaffen, an dem sich Menschen begegnen, Ideen entwickeln und Verantwortung für die Gesellschaft übernehmen können."
   },
   "ueberschriften": {
     "kalender": "Kalender & Termine",
     "kalender_leer": "Aktuell stehen keine neuen Termine an.",
     "projekte": "Aktuelle Projekte & Angebote",
     "buendnisse": "Bündnisarbeit & Netzwerk",
+    "buendnisse_text": "Echte gesellschaftliche Arbeit funktioniert nur gemeinsam. Wir sind stolz auf den Austausch und die Solidarität mit unseren Partnern und befreundeten Organisationen in der Region.",
     "spenden": "Unterstützen & Spenden"
   },
-  "spenden": {},
+  "social_feed": {
+    "anzeigen": false
+  },
+  "spenden": {
+    "text": "Da wir uns aktuell in der Gründung befinden, sind finanzielle Zuwendungen juristisch als Schenkungen zu betrachten. Wir finanzieren damit Räume, Material für Aktionen und Bildungsarbeit für alle."
+  },
+  "mitmachen": {
+    "ueberschrift": "Aktiv werden / Sachspenden",
+    "beschreibung": "Du möchtest dich einbringen oder hast Sachspenden? Schreib uns!",
+    "button_text": "E-Mail schreiben"
+  },
+  "socials": [],
   "footer": {
+    "ueberschrift_kontakt": "Kontakt",
+    "text_kontakt": "Schreib uns verschlüsselt oder trete über Social Media mit uns in Kontakt. Wir versuchen, so schnell wie möglich zu antworten.",
+    "label_email": "Email",
     "kontakt_email": "piresolidarity@tuta.com",
+    "label_standort": "Standort",
+    "standort_text": "Krefeld",
+    "ueberschrift_werte": "Werte-Statement",
+    "werte_statement": "Unsere Arbeit basiert auf bedingungsloser Solidarität, Demokratieförderung und intersektionalem Feminismus. Wir tolerieren keine Form von Rassismus, Antisemitismus, Sexismus oder Queerfeindlichkeit.",
     "copyright_text": "© 2026 PIRE Krefeld. Alle Rechte vorbehalten."
   }
 }

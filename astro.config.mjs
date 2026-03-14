@@ -5,7 +5,6 @@ import react from '@astrojs/react';
 import markdoc from '@astrojs/markdoc';
 
 export default defineConfig({
-  // Kein Adapter, kein Output, reiner Standard.
   integrations: [
     react(),
     keystatic(),

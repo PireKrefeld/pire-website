@@ -1,191 +1,124 @@
-🚀 PIRE Krefeld: Leitfaden zur Webseiten-Pflege (VS Code Edition)
-Willkommen im Web-Team von PIRE Krefeld! Unsere Webseite ist extrem modern, blitzschnell und zu 100 % sicher aufgebaut. Wir nutzen kein hackbares WordPress, sondern arbeiten direkt mit den Dateien auf unserem eigenen Rechner.
+# 🚀 PIRE Krefeld: Leitfaden zur Webseiten-Pflege
 
-Damit du Artikel, Termine oder Bündnisse hinzufügen kannst, musst du nur einmalig deinen PC einrichten. Das dauert ca. 10 Minuten.
+Willkommen im Web-Team von PIRE Krefeld! Unsere Webseite ist extrem modern, blitzschnell und zu 100 % sicher aufgebaut. Wir nutzen kein hackbares WordPress und keine Cloud-Datenbanken. Wir arbeiten stattdessen direkt lokal auf unserem eigenen Rechner.
 
-🛠️ Phase 1: Die Einmalige Einrichtung
-1. Accounts erstellen & Rechte bekommen
+---
 
-Erstelle dir einen kostenlosen Account auf GitHub.com.
+## 👩‍💻 TEIL 1: FÜR REDAKTEURE & TEAMMITGLIEDER
 
-Schick deinen GitHub-Benutzernamen an den Admin. Er wird dir eine Einladung zum "pire-website" Repository schicken. Nimm diese an!
+Dieser Teil erklärt dir, wie du als normales Teammitglied Artikel, Termine oder Bündnisse hinzufügen kannst. Du musst dafür deinen PC nur einmalig einrichten (dauert ca. 10 Minuten).
 
-2. Die Programme installieren (Alles kostenlos)
+### ✍️ WICHTIG: Texte formatieren (Fett, Kursiv, Links)
+Um unsere Webseite rasend schnell und fehlerfrei zu halten, nutzen wir in den meisten Feldern (z.B. bei Kurzbeschreibungen oder dem Spenden-Aufruf) einfache Textfelder. Du kannst deine Texte trotzdem wunderschön formatieren! Nutze dafür einfach diese simplen HTML-Codes:
 
-Lade dir Node.js herunter (Nimm die "LTS" Version) und installiere es (einfach immer auf "Weiter" klicken). Das ist unser Motor.
+* **Fett gedruckt:** Nutze `<b>` und `</b>` *(Beispiel: `Wir sind <b>PIRE Krefeld</b>.`)*
+* **Kursiv:** Nutze `<i>` und `</i>` *(Beispiel: `Ein <i>solidarisches</i> Netzwerk.`)*
+* **Verlinkungen:** Nutze `<a href="DEIN_LINK">` und `</a>` *(Beispiel: `Klicke <a href="https://google.com">hier</a>.`)*
+* **Zeilenumbruch:** Drücke einfach die **Enter-Taste**. Das System baut den Umbruch automatisch ein.
 
-Lade dir Git herunter und installiere es (auch hier einfach die Standard-Einstellungen mit "Weiter" bestätigen). Das ist das unsichtbare Programm, das unsere Dateien mit dem Internet synchronisiert.
+### 🛠️ Phase 1: Die Einmalige Einrichtung (Nur beim ersten Mal!)
+1. **Accounts & Rechte:** Erstelle dir einen Account auf [GitHub.com](https://github.com/) und lass dich vom Admin in das Projekt einladen.
+2. **Programme installieren:** Lade dir [Node.js](https://nodejs.org/) (LTS Version), [Git](https://git-scm.com/downloads) und [Visual Studio Code (VS Code)](https://code.visualstudio.com/) herunter und installiere alles (Standard-Einstellungen genügen).
+3. **Projekt clonen:** Öffne VS Code, klick links auf das "Quellcodeverwaltung"-Icon (drei Kreise), klick auf "Repository klonen" und wähle "Aus GitHub klonen". Wähle unser PIRE-Projekt aus und speichere es in einem Ordner auf deinem PC.
+4. **Motor installieren:** Klick in VS Code oben auf `Terminal` -> `Neues Terminal`. Tippe `npm install` ein und drücke Enter. Warte, bis er fertig ist.
 
-Lade dir Visual Studio Code (VS Code) herunter. Das ist unsere Kommandozentrale.
+### 📝 Phase 2: Dein Arbeitsalltag (Texte & Termine eintragen)
+1. **CMS starten:** Öffne VS Code, mach ein Terminal auf und tippe `npm run dev`. Gehe dann in deinem Browser auf 👉 **http://localhost:4321/keystatic**. Du bist jetzt im Dashboard! Trage deine Dinge ein und klicke auf Speichern.
+2. **Hochladen (Live schalten):** Gehe zurück in VS Code. Klick links auf die Quellcodeverwaltung. Klick auf das **Plus-Symbol (+)** bei deinen Änderungen. Schreib oben kurz rein, was du gemacht hast. Klick auf **Commit** und dann auf **Änderungen synchronisieren**. 
+3. **Fertig!** Cloudflare baut die Seite im Hintergrund neu. In ca. 2 Minuten ist alles live.
 
-3. Das Projekt auf deinen PC holen (Clonen)
+---
+---
 
-Öffne VS Code.
+## 👨‍💻 TEIL 2: FÜR ENTWICKLER & NERDS (UNDER THE HOOD)
 
-Klick ganz links in der Seitenleiste auf das "Quellcodeverwaltung"-Icon (Das Symbol mit den drei kleinen Kreisen/Knotenpunkten, oft das dritte von oben).
+Willkommen im Maschinenraum. Wenn du diese Webseite in Zukunft erweitern, neue Sektionen bauen oder das Design anpassen willst, findest du hier alle nötigen Ressourcen.
 
-Klick auf den blauen Button "Repository klonen" (Clone Repository).
+### 🏗️ Der Tech-Stack (State of the Art 2026)
+Diese Seite ist eine **Static Site Generation (SSG)** Architektur. Sie ist auf maximale Performance, absolute Sicherheit (keine Datenbank, die gehackt werden kann) und perfekten Lighthouse-Score getrimmt.
+* **Framework:** [Astro](https://astro.build/) (Rasend schnelles Frontend)
+* **CMS:** [Keystatic](https://keystatic.com/) (Git-basiertes, lokales CMS)
+* **Styling:** [Tailwind CSS](https://tailwindcss.com/) (Utility-First CSS)
+* **Hosting:** Cloudflare Pages (Automatischer Build bei jedem GitHub Push)
 
-Oben in der Mitte öffnet sich eine Suchleiste. Wähle "Aus GitHub klonen" (Clone from GitHub). (Eventuell musst du dich hier einmal kurz mit deinem GitHub-Account im Browser anmelden).
+### 📂 Projektstruktur (Wo finde ich was?)
+* `keystatic.config.ts`: **Das Gehirn des CMS.** Wenn du neue Felder für die Redakteure (z.B. einen neuen Schalter oder ein neues Textfeld) hinzufügen willst, machst du das hier.
+* `src/content.config.ts`: **Der Türsteher von Astro.** Wenn du in Keystatic ein neues Feld angelegt hast, MUSST du es hier im Zod-Schema (z.B. `z.string().optional()`) ebenfalls eintragen. Sonst ignoriert Astro die neuen Daten oder wirft einen TypeScript-Fehler.
+* `src/pages/index.astro`: **Die Startseite.** Hier wird das Frontend aus HTML, Tailwind-Klassen und Astro-Komponenten zusammengebaut. Alle CMS-Daten werden hier geladen und per `set:html` (für formatierte Texte) ausgegeben.
+* `src/pages/projekte/[id].astro`: Das Template für die dynamischen Unterseiten der einzelnen Projekte. Hier wirkt `is:global` im `<style>` Block, um die generierten Markdown-Inhalte von Keystatic zu stylen.
 
-Wähle unser Projekt PireKrefeld/pire-website aus der Liste aus.
+### 🔌 Ein neues CMS-Feld einbauen (Der Workflow)
+Wenn das Team ein neues Feature will (z.B. ein Feld für eine "Telefonnummer" bei den Terminen), gehst du so vor:
+1. Öffne `keystatic.config.ts`, suche die Collection `termine` und füge z.B. `telefon: fields.text({ label: 'Telefon' })` hinzu.
+2. Öffne `src/content.config.ts`, suche das Schema für `termine` und füge `telefon: z.string().nullish()` hinzu.
+3. Öffne `src/pages/index.astro`, suche die Termin-Schleife (`alleTermine.map...`) und gib das Feld z.B. so aus: `{termin.data.telefon && <span>{termin.data.telefon}</span>}`.
 
-Wähle einen Ordner auf deinem PC (z. B. Dokumente), wo die Webseite gespeichert werden soll.
+### 📖 Wichtige Dokumentationen zum Nachschlagen
+* **Astro Content Collections:** [docs.astro.build/en/guides/content-collections/](https://docs.astro.build/en/guides/content-collections/)
+* **Keystatic Fields (Alle verfügbaren CMS Bausteine):** [keystatic.com/docs/fields](https://keystatic.com/docs/fields)
+* **Tailwind CSS Klassen:** [tailwindcss.com/docs](https://tailwindcss.com/docs)
 
-Wenn VS Code fragt, ob du den Ordner öffnen möchtest: Klick auf "Öffnen" und vertraue den Autoren.
+# 🚀 PIRE Krefeld: Leitfaden zur Webseiten-Pflege
 
-4. Den Motor installieren (Nur beim allerersten Mal!)
+Willkommen im Web-Team von PIRE Krefeld! Unsere Webseite ist extrem modern, blitzschnell und zu 100 % sicher aufgebaut. Wir nutzen kein hackbares WordPress und keine Cloud-Datenbanken. Wir arbeiten stattdessen direkt lokal auf unserem eigenen Rechner.
 
-Klick oben im VS Code Menü auf Terminal -> Neues Terminal (oder drücke Strg + ö bzw. Ctrl + ~).
+---
 
-Unten öffnet sich ein Fenster. Tippe dort folgenden Befehl ein und drücke Enter:
-npm install
-(Warte, bis er fertig geladen hat. Er lädt jetzt alle wichtigen Bausteine der Webseite herunter).
+## 👩‍💻 TEIL 1: FÜR REDAKTEURE & TEAMMITGLIEDER
 
-📝 Phase 2: So bearbeitest du die Webseite (Dein Arbeitsalltag)
-Wenn du in Zukunft einen neuen Termin oder Text eintragen willst, machst du immer Folgendes:
+Dieser Teil erklärt dir, wie du als normales Teammitglied Artikel, Termine oder Bündnisse hinzufügen kannst. Du musst dafür deinen PC nur einmalig einrichten (dauert ca. 10 Minuten).
 
-1. Das CMS (Dashboard) starten
+### ✍️ WICHTIG: Texte formatieren (Fett, Kursiv, Links)
+Um unsere Webseite rasend schnell und fehlerfrei zu halten, nutzen wir in den meisten Feldern (z.B. bei Kurzbeschreibungen oder dem Spenden-Aufruf) einfache Textfelder. Du kannst deine Texte trotzdem wunderschön formatieren! Nutze dafür einfach diese simplen HTML-Codes:
 
-Öffne VS Code (dein pire-website Ordner sollte bereits geladen sein).
+* **Fett gedruckt:** Nutze `<b>` und `</b>` *(Beispiel: `Wir sind <b>PIRE Krefeld</b>.`)*
+* **Kursiv:** Nutze `<i>` und `</i>` *(Beispiel: `Ein <i>solidarisches</i> Netzwerk.`)*
+* **Verlinkungen:** Nutze `<a href="DEIN_LINK">` und `</a>` *(Beispiel: `Klicke <a href="https://google.com">hier</a>.`)*
+* **Zeilenumbruch:** Drücke einfach die **Enter-Taste**. Das System baut den Umbruch automatisch ein.
+* **Trennlinie (Strich):** Schreibe einfach `<hr>` in eine leere Zeile.
 
-Öffne ein Terminal (Terminal -> Neues Terminal).
+📚 **Du willst mehr machen (z. B. unterstrichen, durchgestrichen, Aufzählungen)?**
+Da unsere Textfelder Standard-HTML unterstützen, sind dir keine Grenzen gesetzt. Eine idiotensichere, komplette Liste aller funktionierenden Text-Formatierungen findest du auf diesem Spickzettel:
+👉 [W3Schools: HTML Text-Formatierung (Übersicht)](https://www.w3schools.com/html/html_formatting.asp)
 
-Tippe den Start-Befehl ein und drücke Enter:
-npm run dev
+### 🛠️ Phase 1: Die Einmalige Einrichtung (Nur beim ersten Mal!)
+1. **Accounts & Rechte:** Erstelle dir einen Account auf [GitHub.com](https://github.com/) und lass dich vom Admin in das Projekt einladen.
+2. **Programme installieren:** Lade dir [Node.js](https://nodejs.org/) (LTS Version), [Git](https://git-scm.com/downloads) und [Visual Studio Code (VS Code)](https://code.visualstudio.com/) herunter und installiere alles (Standard-Einstellungen genügen).
+3. **Projekt clonen:** Öffne VS Code, klick links auf das "Quellcodeverwaltung"-Icon (drei Kreise), klick auf "Repository klonen" und wähle "Aus GitHub klonen". Wähle unser PIRE-Projekt aus und speichere es in einem Ordner auf deinem PC.
+4. **Motor installieren:** Klick in VS Code oben auf `Terminal` -> `Neues Terminal`. Tippe `npm install` ein und drücke Enter. Warte, bis er fertig ist.
 
-Öffne deinen normalen Internetbrowser (Chrome, Firefox, Safari) und gehe auf:
-👉 http://localhost:4321/keystatic
+### 📝 Phase 2: Dein Arbeitsalltag (Texte & Termine eintragen)
+1. **CMS starten:** Öffne VS Code, mach ein Terminal auf und tippe `npm run dev`. Gehe dann in deinem Browser auf 👉 **http://localhost:4321/keystatic**. Du bist jetzt im Dashboard! Trage deine Dinge ein und klicke auf Speichern.
+2. **Hochladen (Live schalten):** Gehe zurück in VS Code. Klick links auf die Quellcodeverwaltung. Klick auf das **Plus-Symbol (+)** bei deinen Änderungen. Schreib oben kurz rein, was du gemacht hast. Klick auf **Commit** und dann auf **Änderungen synchronisieren**. 
+3. **Fertig!** Cloudflare baut die Seite im Hintergrund neu. In ca. 2 Minuten ist alles live.
 
-Willkommen im internen Dashboard! Hier kannst du jetzt wie in einem normalen Programm Texte schreiben, Bilder hochladen und Termine erstellen. Speichere deine Änderungen oben rechts ab.
+---
+---
 
-2. Änderungen live schalten (Hochladen & Veröffentlichen)
-Damit die ganze Welt deine neuen Texte sieht, schicken wir sie jetzt über VS Code ins Internet:
+## 👨‍💻 TEIL 2: FÜR ENTWICKLER & NERDS (UNDER THE HOOD)
 
-Gehe zurück in VS Code.
+Willkommen im Maschinenraum. Wenn du diese Webseite in Zukunft erweitern, neue Sektionen bauen oder das Design anpassen willst, findest du hier alle nötigen Ressourcen.
 
-Klick links in der Seitenleiste wieder auf das "Quellcodeverwaltung"-Icon (die drei Kreise). Es sollte jetzt eine kleine blaue Zahl anzeigen (das sind deine ungespeicherten Änderungen).
-
-Fahre mit der Maus über das Wort "Änderungen" (Changes) und klicke auf das kleine Plus-Symbol (+), das daneben auftaucht. (Das nennt man "Stagen" – du packst die Dateien ins Paket).
-
-Schreib in das Textfeld oben drüber kurz rein, was du gemacht hast (z.B. "Neuen Termin für Demo am Samstag hinzugefügt").
-
-Klick auf den blauen Button "Commit" (oder das Häkchen).
-
-Jetzt ändert sich der blaue Button in "Änderungen synchronisieren" (Sync Changes). Klick darauf!
-
-Fertig! Cloudflare baut die Webseite jetzt im Hintergrund neu zusammen. In ca. 2 Minuten sind deine Änderungen online auf der echten Domain für alle sichtbar! Wenn du fertig bist, kannst du das Terminal unten in VS Code einfach mit dem Mülleimer-Symbol schließen.
-
-🚀 PIRE Krefeld: Leitfaden zur Webseiten-Pflege
-Willkommen im Web-Team von PIRE Krefeld! Unsere Webseite ist extrem modern, blitzschnell und zu 100 % sicher aufgebaut. Wir nutzen kein hackbares WordPress, sondern arbeiten direkt mit den Dateien auf unserem eigenen Rechner.
-
-Damit du Artikel, Termine oder Bündnisse hinzufügen kannst, musst du nur einmalig deinen PC einrichten. Das dauert ca. 10 Minuten.
-
-🛠️ Phase 1: Die Einmalige Einrichtung
-1. Accounts erstellen & Rechte bekommen
-
-Erstelle dir einen kostenlosen Account auf GitHub.com.
-
-Schick deinen GitHub-Benutzernamen an den Admin. Er wird dir eine Einladung zum "pire-website" Repository schicken. Nimm diese an!
-
-2. Die Programme installieren (Alles kostenlos)
-
-Lade dir Node.js herunter (Nimm die "LTS" Version) und installiere es (einfach immer auf "Weiter" klicken). Das ist unser Motor.
-
-Lade dir Visual Studio Code (VS Code) herunter. Das ist unser Code-Editor.
-
-Lade dir GitHub Desktop herunter. Das ist unser "Speichern & Hochladen"-Programm.
-
-3. Das Projekt auf deinen PC holen
-
-Öffne GitHub Desktop und logge dich mit deinem GitHub-Account ein.
-
-Klick auf "Clone a repository from the Internet".
-
-Wähle in der Liste pire-website aus und klick unten auf "Clone". Das Projekt wird jetzt auf deinen PC heruntergeladen.
-
-4. Den Motor starten (Nur beim ersten Mal!)
-
-Öffne VS Code.
-
-Klick oben auf Datei -> Ordner öffnen und wähle den Ordner pire-website aus (den GitHub Desktop gerade erstellt hat).
-
-Klick oben im Menü auf Terminal -> Neues Terminal.
-
-Tippe folgenden Befehl ein und drücke Enter:
-npm install
-(Warte, bis er fertig geladen hat. Er holt jetzt alle wichtigen Bausteine).
-
-📝 Phase 2: So bearbeitest du die Webseite (Dein Arbeitsalltag)
-Wenn du einen neuen Termin oder Text eintragen willst, machst du ab jetzt immer Folgendes:
-
-1. Das CMS (Dashboard) starten
-
-Öffne VS Code (mit dem pire-website Ordner).
-
-Öffne ein Terminal (Terminal -> Neues Terminal).
-
-Tippe: npm run dev und drücke Enter.
-
-Öffne deinen Internetbrowser und gehe auf: http://localhost:4321/keystatic
-
-Willkommen im Dashboard! Hier kannst du jetzt wie in einem normalen Programm Texte schreiben, Bilder hochladen und Termine erstellen. Speichere deine Änderungen im Dashboard ab.
-
-2. Änderungen live schalten (Hochladen)
-Damit die ganze Welt deine neuen Texte sieht, müssen wir sie zu GitHub schicken:
-
-Öffne GitHub Desktop.
-
-Das Programm erkennt automatisch alle Änderungen, die du im Dashboard gemacht hast (sie stehen links in der Liste).
-
-Unten links bei "Summary (required)" schreibst du kurz rein, was du gemacht hast (z.B. "Neuen Termin für Demo am Samstag hinzugefügt").
-
-Klick auf den blauen Button "Commit to main".
-
-Klick oben rechts auf "Push origin".
-
-Fertig! Cloudflare baut die Webseite jetzt im Hintergrund neu zusammen. In 2 Minuten sind deine Änderungen online auf der echten Domain sichtbar!
-
-# Astro Starter Kit: Minimal
-
-```sh
-npm create astro@latest -- --template minimal
-```
-
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
-
-## 🚀 Project Structure
-
-Inside of your Astro project, you'll see the following folders and files:
-
-```text
-/
-├── public/
-├── src/
-│   └── pages/
-│       └── index.astro
-└── package.json
-```
-
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
-
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
-
-Any static assets, like images, can be placed in the `public/` directory.
-
-## 🧞 Commands
-
-All commands are run from the root of the project, from a terminal:
-
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
-
-## 👀 Want to learn more?
-
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+### 🏗️ Der Tech-Stack (State of the Art 2026)
+Diese Seite ist eine **Static Site Generation (SSG)** Architektur. Sie ist auf maximale Performance, absolute Sicherheit (keine Datenbank, die gehackt werden kann) und perfekten Lighthouse-Score getrimmt.
+* **Framework:** [Astro](https://astro.build/) (Rasend schnelles Frontend)
+* **CMS:** [Keystatic](https://keystatic.com/) (Git-basiertes, lokales CMS)
+* **Styling:** [Tailwind CSS](https://tailwindcss.com/) (Utility-First CSS)
+* **Hosting:** Cloudflare Pages (Automatischer Build bei jedem GitHub Push)
+
+### 📂 Projektstruktur (Wo finde ich was?)
+* `keystatic.config.ts`: **Das Gehirn des CMS.** Wenn du neue Felder für die Redakteure (z.B. einen neuen Schalter oder ein neues Textfeld) hinzufügen willst, machst du das hier.
+* `src/content.config.ts`: **Der Türsteher von Astro.** Wenn du in Keystatic ein neues Feld angelegt hast, MUSST du es hier im Zod-Schema (z.B. `z.string().optional()`) ebenfalls eintragen. Sonst ignoriert Astro die neuen Daten oder wirft einen TypeScript-Fehler.
+* `src/pages/index.astro`: **Die Startseite.** Hier wird das Frontend aus HTML, Tailwind-Klassen und Astro-Komponenten zusammengebaut. Alle CMS-Daten werden hier geladen und per `set:html` (für formatierte Texte) ausgegeben.
+* `src/pages/projekte/[id].astro`: Das Template für die dynamischen Unterseiten der einzelnen Projekte. Hier wirkt `is:global` im `<style>` Block, um die generierten Markdown-Inhalte von Keystatic zu stylen.
+
+### 🔌 Ein neues CMS-Feld einbauen (Der Workflow)
+Wenn das Team ein neues Feature will (z.B. ein Feld für eine "Telefonnummer" bei den Terminen), gehst du so vor:
+1. Öffne `keystatic.config.ts`, suche die Collection `termine` und füge z.B. `telefon: fields.text({ label: 'Telefon' })` hinzu.
+2. Öffne `src/content.config.ts`, suche das Schema für `termine` und füge `telefon: z.string().nullish()` hinzu.
+3. Öffne `src/pages/index.astro`, suche die Termin-Schleife (`alleTermine.map...`) und gib das Feld z.B. so aus: `{termin.data.telefon && <span>{termin.data.telefon}</span>}`.
+
+### 📖 Wichtige Dokumentationen zum Nachschlagen
+* **Astro Content Collections:** [docs.astro.build/en/guides/content-collections/](https://docs.astro.build/en/guides/content-collections/)
+* **Keystatic Fields (Alle verfügbaren CMS Bausteine):** [keystatic.com/docs/fields](https://keystatic.com/docs/fields)
+* **Tailwind CSS Klassen:** [tailwindcss.com/docs](https://tailwindcss.com/docs)

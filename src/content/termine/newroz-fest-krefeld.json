@@ -1,0 +1,12 @@
+{
+  "titel": "Newroz-Fest Krefeld",
+  "eventTyp": {
+    "discriminant": "einmalig",
+    "value": {
+      "exaktes_datum": "2026-03-20"
+    }
+  },
+  "uhrzeit": "16:00 Uhr",
+  "ort": " Vor dem Kaiser-Wilhelm-Museum",
+  "beschreibung": "Gemeinsames Feiern des kurdischen Neujahrs – mit Kultur, Musik und Solidarität für alle Krefelderinnen und Krefelder.\nDer Fackellauf startet am Kaiser-Wilhelm-Museum und führt zur Fabrik Heeder in Krefeld, wo das Fest gemeinsam gefeiert wird."
+}

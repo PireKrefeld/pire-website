@@ -13,16 +13,63 @@ const ticker = tickerList.length > 0 ? (tickerList[0] as any) : { anzeigen: fals
 const einstellungenFiles = import.meta.glob('../content/einstellungen/startseite.json', { eager: true });
 const einstellungenList = Object.values(einstellungenFiles);
 
-// Sicherer Fallback, falls die Datei noch nicht gespeichert wurde
 const rawConfig = einstellungenList.length > 0 ? (einstellungenList[0] as any) : {};
 const config = {
-  kopfbereich: rawConfig.kopfbereich || { logo: "", hero_headline: "Krefelds Brücke für Zusammenhalt & Solidarität", hero_text: "Wir vereinen die demokratische Zivilgesellschaft, stärken kurdische Kultur und schaffen Räume für Dialog." },
+  kopfbereich: rawConfig.kopfbereich || { logo: "", weisses_logo: false, hero_headline: "Krefelds Brücke für Zusammenhalt & Solidarität", hero_text: "Wir vereinen die demokratische Zivilgesellschaft, stärken kurdische Kultur und schaffen Räume für Dialog." },
   ueberschriften: rawConfig.ueberschriften || { kalender: "Kalender & Termine", kalender_leer: "Aktuell stehen keine neuen Termine an.", projekte: "Aktuelle Projekte & Angebote", buendnisse: "Bündnisarbeit & Netzwerk", buendnisse_text: "Echte gesellschaftliche Arbeit funktioniert nur gemeinsam.", spenden: "Unterstützen & Spenden" },
+  social_feed: rawConfig.social_feed || { anzeigen: false, ueberschrift: "Folge uns auf Instagram", embed_code: "" },
   spenden: rawConfig.spenden || { text: "Wir finanzieren damit Räume und Bildungsarbeit für alle.", opencollective: "", paypal: "", liberapay: "", iban: "" },
-  footer: rawConfig.footer || { kontakt_email: "piresolidarity@tuta.com", werte_statement: "Unsere Arbeit basiert auf bedingungsloser Solidarität.", copyright_text: "© 2026 PIRE Krefeld. Alle Rechte vorbehalten." }
+  mitmachen: rawConfig.mitmachen || { ueberschrift: "Aktiv werden / Sachspenden", beschreibung: "Du möchtest dich einbringen? Schreib uns direkt an!", button_text: "E-Mail schreiben", button_link: "mailto:piresolidarity@tuta.com" },
+  socials: rawConfig.socials || [],
+  footer: rawConfig.footer || { ueberschrift_kontakt: "Kontakt", text_kontakt: "", label_email: "Email:", kontakt_email: "piresolidarity@tuta.com", label_standort: "Standort:", standort_text: "Krefeld", ueberschrift_werte: "Werte-Statement", werte_statement: "Unsere Arbeit basiert auf bedingungsloser Solidarität.", copyright_text: "© 2026 PIRE Krefeld. Alle Rechte vorbehalten." }
 };
 
-const startProjekte = alleProjekte.filter(p => p.data.status !== 'abgebrochen').slice(0, 4);
+const startProjekte = alleProjekte.filter(p => p.data.status?.discriminant !== 'abgebrochen').slice(0, 4);
+
+const socialsMitmachen = config.socials.filter((s: any) => s.anzeigen_in?.includes('mitmachen') && s.url);
+const socialsFooter = config.socials.filter((s: any) => s.anzeigen_in?.includes('footer') && s.url);
+
+const getSocialConfig = (plattform: string) => {
+  if (plattform === 'discord') return { icon: '🎮', name: 'Discord', color: 'bg-[#5865F2] hover:bg-[#4752C4] text-white' };
+  if (plattform === 'whatsapp') return { icon: '💬', name: 'WhatsApp', color: 'bg-[#25D366] hover:bg-[#1DA851] text-white' };
+  if (plattform === 'instagram') return { icon: '📸', name: 'Instagram', color: 'bg-gradient-to-tr from-[#FD1D1D] to-[#833AB4] hover:opacity-90 text-white' };
+  if (plattform === 'telegram') return { icon: '✈️', name: 'Telegram', color: 'bg-[#229ED9] hover:bg-[#1b84b6] text-white' };
+  return { icon: '🔗', name: 'Link', color: 'bg-slate-700 hover:bg-slate-800 text-white' };
+};
+
+const formatText = (text: string | undefined | null) => {
+  if (!text) return '';
+  return text.replace(/\n/g, '<br>');
+};
+
+const getGoogleCalLink = (titel: string | null | undefined, eventTypObj: any, ort: string | null | undefined) => {
+  if (eventTypObj?.discriminant !== 'einmalig' || !eventTypObj?.value?.exaktes_datum) return '#';
+  const d = eventTypObj.value.exaktes_datum.replace(/-/g, '');
+  const safeTitel = titel || 'PIRE Event';
+  const safeOrt = ort || '';
+  return `https://www.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(safeTitel)}&dates=${d}/${d}&location=${encodeURIComponent(safeOrt)}`;
+};
+
+const getBadgeStyle = (statusObj: any) => {
+  if (!statusObj) return { text: 'Aktiv', css: 'bg-blue-100 text-blue-800 border-blue-200' };
+  const type = statusObj.discriminant;
+  
+  if (type === 'custom') {
+    const c = statusObj.value.farbe;
+    const text = statusObj.value.text || 'Custom';
+    if (c === 'green') return { text, css: 'bg-[#329A44]/15 text-[#287a36] border-[#329A44]/30' }; 
+    if (c === 'yellow') return { text, css: 'bg-[#F8D800]/20 text-[#b39b00] border-[#F8D800]/40' };
+    if (c === 'red') return { text, css: 'bg-[#E30A17]/10 text-[#E30A17] border-[#E30A17]/20' };   
+    return { text, css: 'bg-slate-100 text-slate-700 border-slate-200' };
+  }
+  
+  if (type === 'dauerhaft') return { text: 'Dauerhaftes Angebot', css: 'bg-[#329A44]/15 text-[#287a36] border-[#329A44]/30' };
+  if (type === 'aktiv') return { text: 'Aktives Projekt', css: 'bg-blue-100 text-blue-800 border-blue-200' };
+  if (type === 'abgeschlossen') return { text: 'Abgeschlossen', css: 'bg-slate-100 text-slate-600 border-slate-300' };
+  if (type === 'abgebrochen') return { text: 'Abgebrochen', css: 'bg-[#E30A17]/10 text-[#E30A17] border-[#E30A17]/20' };
+  
+  return { text: type, css: 'bg-slate-100 text-slate-700 border-slate-200' };
+};
 ---
 
 <html lang="de" class="scroll-smooth">
@@ -36,6 +83,13 @@ const startProjekte = alleProjekte.filter(p => p.data.status !== 'abgebrochen').
         .ticker-text { display: inline-block; padding-left: 100%; animation: marquee 20s linear infinite; }
       }
       @keyframes marquee { 0% { transform: translate(0, 0); } 100% { transform: translate(-100%, 0); } }
+      .rich-text a { color: #329A44; text-decoration: underline; }
+      .rich-text b, .rich-text strong { font-weight: 800; color: #0f172a; }
+      .rich-text i, .rich-text em { font-style: italic; }
+
+      .footer-soft-text a { color: #329A44; text-decoration: underline; }
+      .footer-soft-text b, .footer-soft-text strong { font-weight: 800; color: #ffffff; }
+      .footer-soft-text i, .footer-soft-text em { font-style: italic; }
     </style>
   </head>
   
@@ -58,8 +112,8 @@ const startProjekte = alleProjekte.filter(p => p.data.status !== 'abgebrochen').
             <span class="text-[#E30A17] font-bold uppercase text-xs md:text-sm flex items-center gap-2 pr-4 shrink-0">
               <span class="w-2 h-2 rounded-full bg-[#E30A17] animate-pulse"></span> Aktuelles:
             </span>
-            <div class="ticker-wrap flex-grow md:hidden"><div class="ticker-text text-xs md:text-sm font-medium">{ticker.text}</div></div>
-            <div class="hidden md:block flex-grow text-sm font-medium truncate">{ticker.text}</div>
+            <div class="ticker-wrap flex-grow md:hidden"><div class="ticker-text text-xs md:text-sm font-medium" set:html={formatText(ticker.text)}></div></div>
+            <div class="hidden md:block flex-grow text-sm font-medium truncate" set:html={formatText(ticker.text)}></div>
           </div>
         </div>
       )}
@@ -68,9 +122,11 @@ const startProjekte = alleProjekte.filter(p => p.data.status !== 'abgebrochen').
     <main class="pt-36">
       
       <section class="max-w-6xl mx-auto px-6 pb-16 md:pb-24 flex flex-col items-center text-center">
-        <img src={config.kopfbereich.logo || "/logo.png"} alt="PIRE Krefeld Logo" class="w-72 md:w-96 mb-12 drop-shadow-xl" />
-        <h1 class="text-4xl md:text-6xl font-extrabold text-slate-900 tracking-tight mb-6 leading-tight">{config.kopfbereich.hero_headline}</h1>
-        <p class="text-lg md:text-xl text-slate-600 max-w-2xl mb-10 leading-relaxed">{config.kopfbereich.hero_text}</p>
+        <div class={config.kopfbereich.weisses_logo ? "bg-slate-900 p-8 md:p-10 rounded-2xl mb-12 shadow-xl inline-block" : "mb-12"}>
+          <img src={config.kopfbereich.logo || "/logo.png"} alt="PIRE Krefeld Logo" class="w-72 md:w-96 drop-shadow-xl" />
+        </div>
+        <h1 class="text-4xl md:text-6xl font-extrabold text-slate-900 tracking-tight mb-6 leading-tight" set:html={config.kopfbereich.hero_headline}></h1>
+        <p class="rich-text text-lg md:text-xl text-slate-600 max-w-2xl mb-10 leading-relaxed" set:html={formatText(config.kopfbereich.hero_text)}></p>
         <div class="flex flex-col sm:flex-row gap-4">
           <a href="#kalender" class="px-8 py-4 bg-[#329A44] hover:bg-[#287a36] text-white font-bold rounded-lg transition-all shadow-md">Aktuelle Termine</a>
           <a href="#spenden" class="px-8 py-4 bg-white hover:bg-slate-50 text-slate-700 font-bold rounded-lg border border-slate-300 shadow-sm">Mitmachen</a>
@@ -84,39 +140,68 @@ const startProjekte = alleProjekte.filter(p => p.data.status !== 'abgebrochen').
             <p class="text-slate-500 italic">{config.ueberschriften.kalender_leer}</p>
           ) : (
             alleTermine.map(termin => {
-              const isWiederkehrend = !!termin.data.rhythmus;
+              const typ = termin.data.eventTyp;
+              const isEinmalig = typ?.discriminant === 'einmalig';
+              const datumValue = isEinmalig ? typ.value.exaktes_datum : null;
+
               let icsLink = "#";
-              if (!isWiederkehrend && termin.data.exaktes_datum) {
-                const datumStr = termin.data.exaktes_datum.replace(/-/g, '');
-                const icsContent = `BEGIN:VCALENDAR\nVERSION:2.0\nPRODID:-//PIRE Krefeld//DE\nBEGIN:VEVENT\nSUMMARY:${termin.data.titel}\nDESCRIPTION:${termin.data.beschreibung}\nLOCATION:${termin.data.ort}\nDTSTART;VALUE=DATE:${datumStr}\nEND:VEVENT\nEND:VCALENDAR`;
+              const safeTitel = termin.data.titel || 'PIRE Event';
+              
+              // 🚀 FIXED: Der Datums-Übersetzer ("20. März")
+              let anzeigeTag = '??';
+              let anzeigeMonat = '??';
+
+              if (isEinmalig && datumValue) {
+                const parts = datumValue.split('-'); // [YYYY, MM, DD]
+                if(parts.length === 3) {
+                  anzeigeTag = parseInt(parts[2], 10) + '.';
+                  const monate = ['Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember'];
+                  anzeigeMonat = monate[parseInt(parts[1], 10) - 1];
+                }
+                
+                const datumStr = datumValue.replace(/-/g, '');
+                const safeOrt = termin.data.ort || '';
+                const safeBeschreibung = termin.data.beschreibung || '';
+                const icsContent = `BEGIN:VCALENDAR\nVERSION:2.0\nPRODID:-//PIRE Krefeld//DE\nBEGIN:VEVENT\nSUMMARY:${safeTitel}\nDESCRIPTION:${safeBeschreibung}\nLOCATION:${safeOrt}\nDTSTART;VALUE=DATE:${datumStr}\nEND:VEVENT\nEND:VCALENDAR`;
                 icsLink = `data:text/calendar;charset=utf8,${encodeURIComponent(icsContent)}`;
               }
-              const anzeigeTag = termin.data.exaktes_datum ? termin.data.exaktes_datum.split('-')[2] : '??';
-              const anzeigeMonatNum = termin.data.exaktes_datum ? termin.data.exaktes_datum.split('-')[1] : '??';
 
               return (
                 <div class="flex flex-col md:flex-row bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm hover:border-[#F8D800] hover:shadow-md transition-all group">
                   <div class="bg-slate-50 border-b md:border-b-0 md:border-r border-slate-200 p-6 flex flex-col items-center justify-center min-w-[160px] text-center">
-                    {isWiederkehrend ? (
-                      <span class="text-lg font-black text-slate-900 leading-tight">{termin.data.rhythmus}</span>
-                    ) : (
+                    {typ?.discriminant === 'wiederkehrend' && <span class="text-lg font-extrabold text-slate-900 leading-tight">{typ.value.rhythmus}</span>}
+                    {typ?.discriminant === 'jaehrlich' && <span class="text-lg font-extrabold text-slate-900 leading-tight">{typ.value.datum_text}</span>}
+                    {isEinmalig && (
                       <>
-                        <span class="text-sm font-bold text-[#E30A17] uppercase tracking-widest">Monat {anzeigeMonatNum}</span>
-                        <span class="text-5xl font-black text-slate-900">{anzeigeTag}</span>
+                        <span class="text-sm font-bold text-[#E30A17] uppercase tracking-widest">{anzeigeMonat}</span>
+                        {/* 🚀 FIXED: font-extrabold (800) anstelle von font-black (900) für die perfekte "2" */}
+                        <span class="text-5xl font-extrabold text-slate-900 mt-1">{anzeigeTag}</span>
                       </>
                     )}
                     <span class="text-sm text-slate-500 font-medium mt-2">{termin.data.uhrzeit}</span>
                   </div>
                   <div class="p-6 md:p-8 flex-grow">
-                    <div class="flex justify-between items-start mb-2"><span class="text-[#F8D800] text-xs font-bold uppercase tracking-wider bg-yellow-50 px-3 py-1 rounded-full border border-yellow-100">{termin.data.eventTyp}</span></div>
+                    <div class="flex justify-between items-start mb-2">
+                      <span class="text-[#F8D800] text-xs font-bold uppercase tracking-wider bg-yellow-50 px-3 py-1 rounded-full border border-yellow-100">
+                        {typ?.discriminant}
+                      </span>
+                    </div>
                     <h3 class="text-2xl font-bold text-slate-900 mb-2 group-hover:text-[#F8D800] transition-colors">{termin.data.titel}</h3>
-                    <p class="text-slate-600 mb-4">{termin.data.beschreibung}</p>
-                    <div class="flex flex-wrap items-center gap-4 mt-6">
-                      <div class="text-sm font-bold text-slate-500 flex items-center gap-2">📍 {termin.data.ort}</div>
-                      {!isWiederkehrend && termin.data.exaktes_datum && (
-                        <a href={icsLink} download={`${termin.data.titel}.ics`} class="ml-auto text-xs font-bold bg-slate-100 hover:bg-slate-200 text-slate-700 py-2 px-4 rounded-lg transition-colors flex items-center gap-2">
-                          📅 In den Kalender (.ics)
-                        </a>
+                    
+                    <p class="rich-text text-slate-600 mb-4" set:html={formatText(termin.data.beschreibung)}></p>
+                    
+                    <div class="flex flex-wrap items-center gap-4 mt-6 border-t border-slate-100 pt-4">
+                      {termin.data.ort && <div class="text-sm font-bold text-slate-500 flex items-center gap-2">{termin.data.ort}</div>}
+                      
+                      {isEinmalig && datumValue && (
+                        <div class="ml-auto flex flex-wrap gap-2">
+                          <a href={getGoogleCalLink(termin.data.titel, typ, termin.data.ort)} target="_blank" class="text-xs font-bold bg-[#329A44]/10 text-[#329A44] hover:bg-[#329A44]/20 py-2 px-4 rounded-lg transition-colors flex items-center gap-2">
+                            + Google Cal
+                          </a>
+                          <a href={icsLink} download={`${safeTitel}.ics`} class="text-xs font-bold bg-slate-100 text-slate-700 hover:bg-slate-200 py-2 px-4 rounded-lg transition-colors flex items-center gap-2">
+                            + Apple / Outlook
+                          </a>
+                        </div>
                       )}
                     </div>
                   </div>
@@ -131,14 +216,24 @@ const startProjekte = alleProjekte.filter(p => p.data.status !== 'abgebrochen').
         <div class="max-w-6xl mx-auto px-6">
           <div class="flex items-center gap-4 mb-10"><h2 class="text-3xl font-bold text-slate-900">{config.ueberschriften.projekte}</h2><div class="h-[2px] flex-grow bg-slate-300"></div></div>
           <div class="grid md:grid-cols-2 gap-8 mb-10">
-            {startProjekte.map(projekt => (
-              <a href={`/projekte/${projekt.id}`} class="bg-white border-2 border-slate-200 p-8 rounded-2xl hover:border-[#329A44] hover:shadow-lg transition-all group block">
-                <span class="text-slate-600 text-xs font-bold uppercase tracking-wider bg-slate-100 px-3 py-1 rounded-full mb-4 inline-block">{projekt.data.status}</span>
-                <h3 class="text-2xl font-bold text-slate-900 mb-3 group-hover:text-[#329A44]">{projekt.data.titel}</h3>
-                <p class="text-slate-600 mb-4">{projekt.data.kurzbeschreibung}</p>
-                <span class="text-sm font-bold text-[#329A44]">Details &rarr;</span>
-              </a>
-            ))}
+            {startProjekte.map(projekt => {
+              const badge = getBadgeStyle(projekt.data.status);
+              return (
+                <a href={`/projekte/${projekt.id}`} class="bg-white border-2 border-slate-200 p-8 rounded-2xl hover:border-[#329A44] hover:shadow-lg transition-all group block flex flex-col h-full">
+                  <span class={`${badge.css} text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-full mb-4 inline-block self-start border`}>{badge.text}</span>
+                  <h3 class="text-2xl font-bold text-slate-900 mb-3 group-hover:text-[#329A44]">{projekt.data.titel}</h3>
+                  <p class="rich-text text-slate-600 mb-6 flex-grow" set:html={formatText(projekt.data.kurzbeschreibung)}></p>
+                  {projekt.data.fakten && projekt.data.fakten.length > 0 && (
+                    <div class="bg-slate-50 p-4 rounded-xl mb-6 space-y-2 border border-slate-100">
+                      {projekt.data.fakten.map((fakt: any) => (
+                        <div class="text-sm flex gap-2 text-slate-700"><span>{fakt.icon}</span> <strong>{fakt.bezeichnung}:</strong> {fakt.wert}</div>
+                      ))}
+                    </div>
+                  )}
+                  <span class="text-sm font-bold text-[#329A44] mt-auto">Details &rarr;</span>
+                </a>
+              );
+            })}
           </div>
           <div class="text-center"><a href="/archiv" class="inline-block px-6 py-3 border border-slate-300 text-slate-600 font-bold rounded-lg hover:bg-slate-200">Aktions-Archiv &rarr;</a></div>
         </div>
@@ -147,55 +242,85 @@ const startProjekte = alleProjekte.filter(p => p.data.status !== 'abgebrochen').
       <section id="buendnisse" class="py-20">
         <div class="max-w-6xl mx-auto px-6">
           <div class="flex items-center gap-4 mb-12"><h2 class="text-3xl font-bold text-slate-900">{config.ueberschriften.buendnisse}</h2><div class="h-[2px] flex-grow bg-slate-300"></div></div>
-          <p class="text-slate-600 mb-10 max-w-3xl text-lg">{config.ueberschriften.buendnisse_text}</p>
-          <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+          <p class="rich-text text-slate-600 mb-10 max-w-3xl text-lg" set:html={formatText(config.ueberschriften.buendnisse_text)}></p>
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12 items-end justify-center">
             {alleBuendnisse.map(buendnis => (
-              <a href={buendnis.data.link || '#'} target="_blank" rel="noopener noreferrer" class="bg-white border border-slate-200 p-6 rounded-xl flex flex-col items-center justify-center gap-4 hover:border-[#329A44] hover:shadow-md transition-all group text-center">
-                {buendnis.data.logo ? <img src={buendnis.data.logo} class="h-16 object-contain grayscale group-hover:grayscale-0" /> : <div class="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center text-slate-400 font-bold text-xs">LOGO</div>}
-                <span class="text-slate-700 font-bold text-sm group-hover:text-[#329A44]">{buendnis.data.name}</span>
+              <a href={buendnis.data.link || '#'} target="_blank" rel="noopener noreferrer" class="flex flex-col items-center justify-end gap-3 transition-all group text-center opacity-75 hover:opacity-100 hover:scale-105 h-full">
+                {buendnis.data.logo ? (
+                  <>
+                    <img src={buendnis.data.logo} class={`max-h-16 md:max-h-20 object-contain grayscale group-hover:grayscale-0 transition-all ${buendnis.data.weisses_logo ? 'bg-slate-900 p-3 rounded-xl' : ''}`} alt={buendnis.data.name} />
+                    <span class="text-xs font-bold text-slate-500 group-hover:text-[#329A44] transition-colors">{buendnis.data.name}</span>
+                  </>
+                ) : (
+                  <span class="text-slate-700 font-bold text-lg group-hover:text-[#329A44] transition-colors">{buendnis.data.name}</span>
+                )}
               </a>
             ))}
           </div>
         </div>
       </section>
 
-      <section id="spenden" class="bg-slate-100 border-y border-slate-200 py-20">
+      {config.social_feed.anzeigen && config.social_feed.embed_code && (
+        <section id="social-feed" class="py-16 bg-white border-t border-slate-200">
+          <div class="max-w-6xl mx-auto px-6">
+            <div class="flex items-center gap-4 mb-10">
+              <h2 class="text-3xl font-bold text-slate-900">{config.social_feed.ueberschrift}</h2>
+              <div class="h-[2px] flex-grow bg-slate-200"></div>
+            </div>
+            <div class="w-full bg-slate-50 rounded-2xl border border-slate-200 p-4 shadow-sm overflow-hidden" set:html={config.social_feed.embed_code}></div>
+          </div>
+        </section>
+      )}
+
+      <section id="spenden" class="bg-slate-100 border-y border-slate-200 py-16 md:py-24">
         <div class="max-w-6xl mx-auto px-6">
           <div class="flex items-center gap-4 mb-12"><h2 class="text-3xl font-bold text-slate-900">{config.ueberschriften.spenden}</h2><div class="h-[2px] flex-grow bg-slate-300"></div></div>
           
-          <div class="bg-white p-8 md:p-12 rounded-2xl shadow-sm border border-slate-200 mb-8">
-            <h3 class="text-2xl font-bold text-slate-900 mb-4">Gemeinsam Brücken bauen.</h3>
-            <p class="text-slate-600 mb-8 max-w-3xl text-lg">{config.spenden.text}</p>
+          <div class="grid lg:grid-cols-2 gap-8 items-stretch">
             
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-              {config.spenden.opencollective && (
-                <a href={config.spenden.opencollective} target="_blank" class="flex flex-col justify-center items-center text-center bg-[#F8D800] text-slate-900 font-bold px-4 py-4 rounded-xl hover:bg-yellow-400 transition-colors shadow-sm">
-                  <span>Via Open Collective</span>
-                </a>
-              )}
-              {config.spenden.paypal && (
-                <a href={config.spenden.paypal} target="_blank" class="flex flex-col justify-center items-center text-center bg-[#00457C] text-white font-bold px-4 py-4 rounded-xl hover:bg-[#00335c] transition-colors shadow-sm">
-                  <span>Via PayPal</span>
-                </a>
-              )}
-              {config.spenden.liberapay && (
-                <a href={config.spenden.liberapay} target="_blank" class="flex flex-col justify-center items-center text-center bg-[#F6C915] text-slate-900 font-bold px-4 py-4 rounded-xl hover:bg-yellow-500 transition-colors shadow-sm">
-                  <span>Via Liberapay</span>
-                </a>
-              )}
-              {config.spenden.iban && (
-                <div class="flex flex-col justify-center items-center bg-slate-50 border border-slate-200 p-4 rounded-xl text-center">
-                  <span class="block text-xs text-slate-500 uppercase font-bold mb-1">Banküberweisung</span>
-                  <code class="text-slate-800 font-mono font-bold text-sm">{config.spenden.iban}</code>
-                </div>
-              )}
+            <div class="bg-white p-8 md:p-12 rounded-2xl shadow-sm border border-slate-200 flex flex-col justify-center h-full">
+              <h3 class="text-2xl font-bold text-slate-900 mb-4">Gemeinsam Brücken bauen.</h3>
+              <p class="rich-text text-slate-600 mb-8 text-lg" set:html={formatText(config.spenden.text)}></p>
+              
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {config.spenden.opencollective && (
+                  <a href={config.spenden.opencollective} target="_blank" class="flex justify-center items-center text-center bg-[#F8D800] text-slate-900 font-bold px-4 py-4 rounded-xl hover:bg-yellow-400 transition-colors shadow-sm">Via Open Collective</a>
+                )}
+                {config.spenden.paypal && (
+                  <a href={config.spenden.paypal} target="_blank" class="flex justify-center items-center text-center bg-[#00457C] text-white font-bold px-4 py-4 rounded-xl hover:bg-[#00335c] transition-colors shadow-sm">Via PayPal</a>
+                )}
+                {config.spenden.liberapay && (
+                  <a href={config.spenden.liberapay} target="_blank" class="flex justify-center items-center text-center bg-[#F6C915] text-slate-900 font-bold px-4 py-4 rounded-xl hover:bg-yellow-500 transition-colors shadow-sm">Via Liberapay</a>
+                )}
+                {config.spenden.iban && (
+                  <div class="flex flex-col justify-center items-center bg-slate-50 border border-slate-200 p-3 rounded-xl text-center sm:col-span-2 mt-2">
+                    <span class="block text-xs text-slate-500 uppercase font-bold mb-1">Banküberweisung</span>
+                    <code class="text-slate-800 font-mono font-bold text-sm" set:html={formatText(config.spenden.iban)}></code>
+                  </div>
+                )}
+              </div>
             </div>
-          </div>
 
-          <div class="bg-[#329A44] p-8 rounded-2xl text-white text-center">
-            <h3 class="text-xl font-bold mb-2">Aktiv werden / Sachspenden</h3>
-            <p class="text-white/80 mb-6">Du möchtest dich einbringen? Schreib uns direkt an!</p>
-            <a href={`mailto:${config.footer.kontakt_email}`} class="inline-block bg-white text-[#329A44] font-bold px-8 py-3 rounded-lg hover:bg-slate-50 transition-colors shadow-sm">E-Mail schreiben</a>
+            <div class="bg-[#329A44] p-8 md:p-12 rounded-2xl text-center shadow-lg border border-[#287a36] flex flex-col justify-center h-full">
+              <h3 class="text-2xl md:text-3xl font-extrabold text-white mb-4">{config.mitmachen.ueberschrift}</h3>
+              <p class="text-white/90 mb-8 text-lg" set:html={formatText(config.mitmachen.beschreibung)}></p>
+              
+              <div class="flex flex-col sm:flex-row flex-wrap justify-center gap-4">
+                {config.mitmachen.button_text && config.mitmachen.button_link && (
+                  <a href={config.mitmachen.button_link} target="_blank" class="bg-white text-[#329A44] font-bold px-8 py-4 rounded-xl hover:bg-slate-50 transition-transform hover:-translate-y-1 shadow-md w-full sm:w-auto">{config.mitmachen.button_text}</a>
+                )}
+                
+                {socialsMitmachen.map((s: any) => {
+                  const style = getSocialConfig(s.plattform);
+                  return (
+                    <a href={s.url} target="_blank" class={`${style.color} font-bold px-8 py-4 rounded-xl transition-transform hover:-translate-y-1 shadow-md flex items-center justify-center gap-2 w-full sm:w-auto`}>
+                      <span class="text-xl">{style.icon}</span> {style.name}
+                    </a>
+                  );
+                })}
+              </div>
+            </div>
+
           </div>
         </div>
       </section>
@@ -204,20 +329,51 @@ const startProjekte = alleProjekte.filter(p => p.data.status !== 'abgebrochen').
         <div class="max-w-6xl mx-auto px-6">
           <div class="grid md:grid-cols-2 gap-12 mb-16">
             <div>
-              <h2 class="text-2xl font-bold text-white mb-6">Kontakt</h2>
-              <ul class="space-y-3 text-slate-400">
-                <li><strong class="text-white">Email:</strong> {config.footer.kontakt_email}</li>
-                <li><strong class="text-white">Standort:</strong> Krefeld</li>
+              <h2 class="text-2xl font-bold text-white mb-6">{config.footer.ueberschrift_kontakt}</h2>
+              {config.footer.text_kontakt && <p class="footer-soft-text text-slate-400 mb-6 text-sm" set:html={formatText(config.footer.text_kontakt)}></p>}
+              
+              <ul class="space-y-4 text-slate-400 mb-8">
+                {config.footer.label_email && config.footer.kontakt_email && (
+                  <li class="flex items-center gap-3">
+                    <div>
+                      <span class="block text-xs uppercase tracking-wider text-slate-500 font-bold" set:html={formatText(config.footer.label_email)}></span>
+                      <a href={`mailto:${config.footer.kontakt_email}`} class="hover:text-white transition-colors text-white font-medium">{config.footer.kontakt_email}</a>
+                    </div>
+                  </li>
+                )}
+                
+                {config.footer.label_standort && config.footer.standort_text && (
+                  <li class="flex items-center gap-3 mt-4">
+                    <div>
+                      <span class="block text-xs uppercase tracking-wider text-slate-500 font-bold" set:html={formatText(config.footer.label_standort)}></span>
+                      <span class="text-white font-medium">{config.footer.standort_text}</span>
+                    </div>
+                  </li>
+                )}
               </ul>
+
+              {socialsFooter.length > 0 && (
+                <div class="flex flex-wrap gap-3">
+                  {socialsFooter.map((s: any) => {
+                    const style = getSocialConfig(s.plattform);
+                    return (
+                      <a href={s.url} target="_blank" class={`${style.color} text-xs font-bold px-4 py-2 rounded-lg transition-transform hover:-translate-y-1 shadow-sm flex items-center gap-2`}>
+                        <span>{style.icon}</span> {style.name}
+                      </a>
+                    );
+                  })}
+                </div>
+              )}
             </div>
-            <div class="bg-slate-800 p-6 rounded-xl border border-slate-700">
-              <h3 class="font-bold text-white mb-4">Werte-Statement</h3>
-              <p class="text-sm text-slate-400 leading-relaxed">{config.footer.werte_statement}</p>
+            
+            <div class="bg-slate-800 p-6 rounded-xl border border-slate-700 shadow-inner">
+              <h3 class="font-bold text-white mb-4" set:html={formatText(config.footer.ueberschrift_werte)}></h3>
+              <p class="footer-soft-text text-sm text-slate-400 leading-relaxed" set:html={formatText(config.footer.werte_statement)}></p>
             </div>
           </div>
           
           <div class="border-t border-slate-800 pt-8 mt-8 text-center">
-            <p class="text-xs text-slate-500">{config.footer.copyright_text}</p>
+            <p class="footer-soft-text text-xs text-slate-500" set:html={formatText(config.footer.copyright_text)}></p>
           </div>
         </div>
       </section>
