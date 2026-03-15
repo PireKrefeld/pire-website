@@ -2,20 +2,20 @@ import { defineConfig } from 'astro/config';
 import tailwind from '@astrojs/tailwind';
 import react from '@astrojs/react';
 import keystatic from '@keystatic/astro';
-import cloudflare from '@astrojs/cloudflare';
 import markdoc from '@astrojs/markdoc'; 
 
+// Wir prüfen, ob du lokal arbeitest ('dev')
 const isDev = process.argv.includes('dev');
 
 export default defineConfig({
   output: 'static', 
   
-  adapter: isDev ? undefined : cloudflare(), 
-  
   integrations: [
     react(),
-    markdoc(), 
-    keystatic(), 
-    tailwind()
+    markdoc(), // 🚀 Der wahre Held: Er liest die Texte.
+    tailwind(),
+    // 🚀 Der Türsteher: Lokal hast du dein Dashboard, 
+    // online wird Keystatic gelöscht. Kein Server, kein Adapter nötig!
+    ...(isDev ? [keystatic()] : [])
   ]
 });
