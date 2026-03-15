@@ -4,7 +4,7 @@ import react from '@astrojs/react';
 import keystatic from '@keystatic/astro';
 
 export default defineConfig({
-  // 🚀 DER MAGISCHE SCHALTER: Wir zwingen Astro, reines HTML zu bauen!
+  // 🚀 Zwingt Astro, reines, extrem schnelles HTML zu bauen (Keine 404-Fehler mehr!)
   output: 'static', 
   
   integrations: [
