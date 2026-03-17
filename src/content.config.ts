@@ -5,6 +5,10 @@ const termine = defineCollection({
   loader: glob({ pattern: '**/*.json', base: './src/content/termine' }),
   schema: z.object({
     titel: z.string().optional(),
+    
+    // 🚀 NEU: Der Passierschein für Astro! Jetzt lässt der Türsteher dein Wort durch.
+    customStatus: z.string().nullish(),
+    
     eventTyp: z.object({
       discriminant: z.string(),
       value: z.any(),
@@ -40,7 +44,7 @@ const buendnisse = defineCollection({
     name: z.string().optional(),
     link: z.string().url().nullish().or(z.literal('').nullish()),
     logo: z.string().nullish(), 
-    weisses_logo: z.boolean().optional(), // 🚀 NEU: Erlaubt das weiße Logo bei Bündnissen
+    weisses_logo: z.boolean().optional(), 
   }),
 });
 

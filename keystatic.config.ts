@@ -19,6 +19,14 @@ export default config({
       path: 'src/content/einstellungen/startseite',
       format: { data: 'json' },
       schema: {
+        // 🚀 NEU: DAS KONTROLLZENTRUM FÜR SICHTBARKEIT
+        sichtbarkeit: fields.object({
+          kalender: fields.checkbox({ label: '📅 Kalender anzeigen?', defaultValue: true }),
+          projekte: fields.checkbox({ label: '🛠️ Projekte anzeigen?', defaultValue: true }),
+          buendnisse: fields.checkbox({ label: '🤝 Bündnisse anzeigen?', defaultValue: true }),
+          spenden: fields.checkbox({ label: '💰 Spenden/Mitmachen anzeigen?', defaultValue: true }),
+        }, { label: '👁️ SICHTBARKEIT DER SEKTIONEN (Ein-/Ausschalten)' }),
+
         kopfbereich: fields.object({
           logo: fields.image({ label: 'Website Logo', directory: 'public/images/logo', publicPath: '/images/logo/' }),
           weisses_logo: fields.checkbox({ label: 'Logo ist weiß? (Erzeugt automatisch einen dunklen Hintergrund)', defaultValue: false }),
@@ -49,12 +57,11 @@ export default config({
           iban: fields.text({ label: 'Bankverbindung / IBAN (Leer lassen zum Verstecken)' }),
         }, { label: '💰 SPENDEN-LINKS' }),
 
-        // 🚀 UPDATE: Mitmachen ist jetzt komplett entkoppelt und flexibel
         mitmachen: fields.object({
           ueberschrift: fields.text({ label: 'Überschrift', defaultValue: 'Aktiv werden / Sachspenden' }),
           beschreibung: fields.text({ label: 'Beschreibungstext', defaultValue: 'Du möchtest dich einbringen? Schreib uns direkt an!' }),
           button_text: fields.text({ label: 'Button Text (Leer = Verstecken)', defaultValue: 'E-Mail schreiben' }),
-          button_link: fields.text({ label: 'Button Link / Ziel', defaultValue: 'mailto:piresolidarity@tuta.com', description: 'Für E-Mail: mailto:name@mail.de | Für Formular: https://... | Für Telefon: tel:+49...' }),
+          button_link: fields.text({ label: 'Button Link / Ziel', defaultValue: 'mailto:piresolidarity@tuta.com' }),
         }, { label: '🤝 MITMACHEN (Grüne Box)' }),
         
         socials: fields.array(
@@ -62,10 +69,8 @@ export default config({
             plattform: fields.select({
               label: 'Plattform',
               options: [
-                { label: 'Discord', value: 'discord' },
-                { label: 'WhatsApp', value: 'whatsapp' },
-                { label: 'Instagram', value: 'instagram' },
-                { label: 'Telegram', value: 'telegram' },
+                { label: 'Discord', value: 'discord' }, { label: 'WhatsApp', value: 'whatsapp' },
+                { label: 'Instagram', value: 'instagram' }, { label: 'Telegram', value: 'telegram' },
                 { label: 'Sonstiger Link', value: 'link' }
               ],
               defaultValue: 'instagram'
@@ -96,6 +101,29 @@ export default config({
         }, { label: '⚖️ KONTAKT & FOOTER' }),
       },
     }),
+
+    globalSettings: singleton({
+      label: '🌐 Globale Fallback Texte',
+      path: 'src/content/settings/global',
+      format: { data: 'json' },
+      schema: {
+        metaTitle: fields.text({ label: 'Browser Tab Titel', defaultValue: 'PIRE Krefeld | Solidarische Brücken bauen' }),
+        tickerPrefix: fields.text({ label: 'Ticker-Signalwort (z.B. Aktuelles:)', defaultValue: 'Aktuelles:' }),
+        navKalender: fields.text({ label: 'Menü: Kalender', defaultValue: 'Kalender' }),
+        navProjekte: fields.text({ label: 'Menü: Projekte', defaultValue: 'Projekte' }),
+        navBuendnisse: fields.text({ label: 'Menü: Bündnisse', defaultValue: 'Bündnisse' }),
+        navSpenden: fields.text({ label: 'Menü: Unterstützen', defaultValue: 'Unterstützen' }),
+        heroBtn1: fields.text({ label: 'Hero Button 1', defaultValue: 'Aktuelle Termine' }),
+        heroBtn2: fields.text({ label: 'Hero Button 2', defaultValue: 'Mitmachen' }),
+        btnDetails: fields.text({ label: 'Button: Details', defaultValue: 'Details →' }),
+        btnArchiv: fields.text({ label: 'Button: Archiv', defaultValue: 'Aktions-Archiv →' }),
+        btnGoogleCal: fields.text({ label: 'Button: Google Calendar', defaultValue: '+ Google Cal' }),
+        btnAppleCal: fields.text({ label: 'Button: Apple / Outlook', defaultValue: '+ Apple / Outlook' }),
+        eventStatusFallback: fields.text({ label: 'Standard-Wort für alte Events', defaultValue: 'Abgeschlossen' }),
+        spendenSubtitle: fields.text({ label: 'Spendenbox Untertitel', defaultValue: 'Gemeinsam Brücken bauen.' }),
+        spendenBank: fields.text({ label: 'Bezeichnung Banküberweisung', defaultValue: 'Banküberweisung' }),
+      },
+    }),
   },
 
   collections: {
@@ -106,6 +134,10 @@ export default config({
       format: { data: 'json' },
       schema: {
         titel: fields.slug({ name: { label: 'Event Name' } }),
+        customStatus: fields.text({
+          label: 'Individueller Event-Status (Optional)',
+          description: 'Leer lassen für den globalen Standard. Trage hier z.B. "Einzeltermin" ein.',
+        }),
         eventTyp: fields.conditional(
           fields.select({
             label: 'Art des Events',

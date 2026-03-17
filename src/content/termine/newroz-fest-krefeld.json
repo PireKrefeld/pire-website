@@ -1,5 +1,6 @@
 {
   "titel": "Newroz-Fest Krefeld",
+  "customStatus": "Besonderes Event",
   "eventTyp": {
     "discriminant": "einmalig",
     "value": {
