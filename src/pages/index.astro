@@ -18,6 +18,11 @@ const globalList = Object.values(globalFiles);
 const globalText = globalList.length > 0 ? (globalList[0] as any) : {};
 
 const metaTitle = globalText.metaTitle || 'PIRE Krefeld | Solidarische Brücken bauen';
+
+// 🚀 DER CACHE-BUSTER: Zwingt den Browser, das Icon bei jeder Änderung neu zu laden
+const faviconBase = globalText.favicon || '/favicon.png';
+const faviconPath = `${faviconBase}?v=${Date.now()}`;
+
 const tickerPrefix = globalText.tickerPrefix || 'Aktuelles:';
 
 const navKalender = globalText.navKalender || 'Kalender';
@@ -37,7 +42,6 @@ const spendenBank = globalText.spendenBank || 'Banküberweisung';
 
 const rawConfig = einstellungenList.length > 0 ? (einstellungenList[0] as any) : {};
 const config = {
-  // 🚀 NEU: HIER WERDEN DIE SCHALTER GELADEN (Standard: Alles ist sichtbar)
   sichtbarkeit: rawConfig.sichtbarkeit || { kalender: true, projekte: true, buendnisse: true, spenden: true },
   
   kopfbereich: rawConfig.kopfbereich || { logo: "", weisses_logo: false, hero_headline: "Krefelds Brücke für Zusammenhalt & Solidarität", hero_text: "Wir vereinen die demokratische Zivilgesellschaft, stärken kurdische Kultur und schaffen Räume für Dialog." },
@@ -101,6 +105,11 @@ const getBadgeStyle = (statusObj: any) => {
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{metaTitle}</title>
+    
+    <link rel="icon" type="image/png" href={faviconPath} />
+    <link rel="shortcut icon" type="image/png" href={faviconPath} />
+    <link rel="apple-touch-icon" href={faviconPath} />
+
     <style>
       @media (max-width: 768px) {
         .ticker-wrap { width: 100%; overflow: hidden; white-space: nowrap; }

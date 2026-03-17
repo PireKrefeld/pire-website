@@ -1,0 +1,18 @@
+{
+  "metaTitle": "PIRE Krefeld | Solidarische Brücken bauen",
+  "favicon": "/images/theme/favicon.png",
+  "tickerPrefix": "Aktuelles:",
+  "navKalender": "Kalender",
+  "navProjekte": "Projekte",
+  "navBuendnisse": "Bündnisse",
+  "navSpenden": "Unterstützen",
+  "heroBtn1": "Aktuelle Termine",
+  "heroBtn2": "Mitmachen",
+  "btnDetails": "Details →",
+  "btnArchiv": "Aktions-Archiv →",
+  "btnGoogleCal": "+ Google Cal",
+  "btnAppleCal": "+ Apple / Outlook",
+  "eventStatusFallback": "Abgeschlossen",
+  "spendenSubtitle": "Gemeinsam Brücken bauen.",
+  "spendenBank": "Banküberweisung"
+}

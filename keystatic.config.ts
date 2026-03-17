@@ -19,7 +19,7 @@ export default config({
       path: 'src/content/einstellungen/startseite',
       format: { data: 'json' },
       schema: {
-        // 🚀 NEU: DAS KONTROLLZENTRUM FÜR SICHTBARKEIT
+        // 🚀 KONTROLLZENTRUM FÜR SICHTBARKEIT
         sichtbarkeit: fields.object({
           kalender: fields.checkbox({ label: '📅 Kalender anzeigen?', defaultValue: true }),
           projekte: fields.checkbox({ label: '🛠️ Projekte anzeigen?', defaultValue: true }),
@@ -108,6 +108,14 @@ export default config({
       format: { data: 'json' },
       schema: {
         metaTitle: fields.text({ label: 'Browser Tab Titel', defaultValue: 'PIRE Krefeld | Solidarische Brücken bauen' }),
+        
+        // 🚀 NEU: HIER IST DAS UPLOAD-FELD FÜR DEIN FAVICON (Zeile 116)
+        favicon: fields.image({
+          label: 'Browser Favicon (Das kleine Icon oben im Tab)',
+          directory: 'public/images/theme',
+          publicPath: '/images/theme/'
+        }),
+
         tickerPrefix: fields.text({ label: 'Ticker-Signalwort (z.B. Aktuelles:)', defaultValue: 'Aktuelles:' }),
         navKalender: fields.text({ label: 'Menü: Kalender', defaultValue: 'Kalender' }),
         navProjekte: fields.text({ label: 'Menü: Projekte', defaultValue: 'Projekte' }),
@@ -225,7 +233,7 @@ export default config({
       format: { data: 'json' },
       schema: {
         name: fields.slug({ name: { label: 'Name der Organisation' } }),
-        link: fields.url({ label: 'Link zur Webseite (Optional)' }),
+        link: fields.url({ label: 'Webseite (Optional)' }),
         logo: fields.image({ label: 'Logo hochladen', directory: 'public/images/buendnisse', publicPath: '/images/buendnisse/' }),
         weisses_logo: fields.checkbox({ label: 'Logo ist weiß? (Erzeugt dunklen Hintergrund)', defaultValue: false }),
       },
