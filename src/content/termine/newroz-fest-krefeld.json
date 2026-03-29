@@ -1,5 +1,19 @@
 {
   "titel": "Newroz-Fest Krefeld",
+  "uebersetzungen": {
+    "ku": {
+      "titel": "Cejna Newrozê",
+      "beschreibung": "Bi hev re pîrozbahî kirina Newroza kurdan – bi çand, muzîk û hevgirtinê ji bo hemû jin û mêrên Krefeldê.\nFackellauf (meşiya bi meşaleyan) ji Kaiser-Wilhelm-Museum dest pê dike û diçe ber bi Fabrik Heeder, ku li wir şanoya pîrozbahiyê bi hev re tê lidarxistin."
+    },
+    "en": {
+      "titel": "Newroz Celebration",
+      "beschreibung": "Celebrating the Kurdish New Year together – with culture, music, and solidarity for all residents of Krefeld.\nThe torch march starts at the Kaiser-Wilhelm Museum and proceeds to Fabrik Heeder, where the celebration will take place together."
+    },
+    "tr": {
+      "titel": "Newroz Kutlaması",
+      "beschreibung": "Kürt Yeni Yılı’nı birlikte kutluyoruz – Krefeld’de yaşayan herkes için kültür, müzik ve dayanışmayla.\nMeşaleli yürüyüş Kaiser-Wilhelm Müzesi’nde başlar ve Fabrik Heeder’e kadar devam eder; kutlama burada hep birlikte gerçekleşir."
+    }
+  },
   "customStatus": "Besonderes Event",
   "eventTyp": {
     "discriminant": "einmalig",

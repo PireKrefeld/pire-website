@@ -1,0 +1,17 @@
+{
+  "sprache": "en",
+  "navKalender": "Calendar",
+  "navProjekte": "Projects",
+  "navBuendnisse": "Alliances",
+  "navSpenden": "To support",
+  "heroBtn1": "Current dates",
+  "heroBtn2": "Participate",
+  "btnDetails": "Details",
+  "btnArchiv": "Action Archive",
+  "btnGoogleCal": "Google Calendar",
+  "btnAppleCal": "Apple / Outlook",
+  "statusAbgeschlossen": "Complete",
+  "spendenBank": "Bank transfer",
+  "tickerPrefix": "Currents",
+  "kalenderLeer": "No new dates are currently scheduled."
+}

@@ -1,4 +1,15 @@
 {
   "anzeigen": true,
-  "text": " +++ EILMELDUNG: Gemeinsames Newroz-Fest am 20.03. um 16:00 Uhr vor dem Kaiser-Wilhelm-Museum! Feiert mit uns! +++"
+  "text": " +++ EILMELDUNG: Gemeinsames Newroz-Fest am 20.03. um 16:00 Uhr vor dem Kaiser-Wilhelm-Museum! Feiert mit uns! +++",
+  "uebersetzungen": {
+    "ku": {
+      "text": "+++ AGahdariya GIRÎNG: Cejna hevpar a Newrozê di 20.03 de saet 16:00’an de li ber Kaiser-Wilhelm-Museum! Bi me re pîrozbahî bikin! +++"
+    },
+    "en": {
+      "text": "+++ BREAKING NEWS: Joint Newroz celebration on 20.03 at 16:00 in front of the Kaiser-Wilhelm-Museum! Celebrate with us! +++"
+    },
+    "tr": {
+      "text": "+++ SON DAKİKA: 20.03 tarihinde saat 16:00’da Kaiser-Wilhelm-Museum önünde ortak Newroz kutlaması! Bizimle birlikte kutlayın! +++"
+    }
+  }
 }

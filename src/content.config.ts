@@ -1,51 +1,26 @@
 import { defineCollection, z } from 'astro:content';
 import { glob } from 'astro/loaders';
 
-const termine = defineCollection({
-  loader: glob({ pattern: '**/*.json', base: './src/content/termine' }),
+// 🚀 DIE NEUE MASTER-DATENBANK
+const aktionen = defineCollection({
+  loader: glob({ pattern: '**/*.{md,mdx,mdoc}', base: './src/content/aktionen' }),
   schema: z.object({
     titel: z.string().optional(),
-    
-    // 🚀 NEU: Der Passierschein für Astro! Jetzt lässt der Türsteher dein Wort durch.
-    customStatus: z.string().nullish(),
-    
-    eventTyp: z.object({
-      discriminant: z.string(),
-      value: z.any(),
-    }).optional(),
-    uhrzeit: z.string().nullish(),
-    ort: z.string().nullish(),
-    beschreibung: z.string().nullish(),
-  })
-});
-
-const projekte = defineCollection({
-  loader: glob({ pattern: '**/*.{md,mdx,mdoc}', base: './src/content/projekte' }),
-  schema: z.object({
-    titel: z.string().optional(),
-    status: z.object({
-      discriminant: z.string(),
-      value: z.any(),
-    }).optional(),
-    kurzbeschreibung: z.string().nullish(),
-    fakten: z.array(
-      z.object({
-        icon: z.string().optional(),
-        bezeichnung: z.string().optional(),
-        wert: z.string().optional(),
-      })
-    ).optional().default([]),
-  }),
+  }).catchall(z.any()) 
 });
 
 const buendnisse = defineCollection({
   loader: glob({ pattern: '**/*.json', base: './src/content/buendnisse' }),
   schema: z.object({
     name: z.string().optional(),
-    link: z.string().url().nullish().or(z.literal('').nullish()),
-    logo: z.string().nullish(), 
-    weisses_logo: z.boolean().optional(), 
-  }),
+  }).catchall(z.any())
 });
 
-export const collections = { termine, projekte, buendnisse };
+const ui_texte = defineCollection({
+  loader: glob({ pattern: '**/*.json', base: './src/content/ui_texte' }),
+  schema: z.object({
+    sprache: z.string().optional()
+  }).catchall(z.any()) 
+});
+
+export const collections = { aktionen, buendnisse, ui_texte };

@@ -1,0 +1,172 @@
+---
+import '../../styles/global.css';
+---
+
+<html lang="de">
+  <head>
+    <meta charset="utf-8" />
+    <title>PIRE - Titanium Translator</title>
+  </head>
+  <body class="bg-slate-900 text-slate-200 min-h-screen p-8 font-sans">
+    
+    <div class="max-w-5xl mx-auto">
+      <div class="flex items-center gap-4 mb-8 border-b border-slate-700 pb-6">
+        <span class="text-4xl">🤖</span>
+        <div>
+          <h1 class="text-3xl font-bold text-white">Titanium Translator</h1>
+          <p class="text-slate-400">Lokale GPU (Llama 3.2) - Volle Kontrolle. Kein Überschreiben ohne Erlaubnis.</p>
+        </div>
+      </div>
+
+      <h2 class="text-xl font-bold text-[#F8D800] mb-4">⚡ 1. Auto-Fill Scanner (Für System-Texte & Aktionen)</h2>
+      <div class="bg-slate-800 p-6 rounded-2xl border border-slate-700 shadow-xl mb-12">
+        <p class="text-sm text-slate-400 mb-6">Wähle eine Datenbank. Das System sucht leere Felder und lässt die GPU die Übersetzungen berechnen. Bestehende Texte werden <b>niemals</b> überschrieben, es sei denn, du hakst die Gefahr-Box an.</p>
+        
+        <div class="flex flex-col md:flex-row gap-4 mb-6">
+          <div class="flex-grow">
+            <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Zieldatenbank auswählen</label>
+            <select id="autoTarget" class="w-full bg-slate-900 border border-slate-600 rounded-lg p-3 text-white focus:border-[#F8D800] outline-none">
+              <option value="ui">🌍 Globale UI-Texte (Buttons, Menü, etc.)</option>
+              <option value="startseite">⚙️ Startseite (Überschriften, Footer, Hero)</option>
+              <option value="ticker">🚨 Ticker / Eilmeldung</option>
+              {/* 🚀 HIER IST DEIN ENDGAME-BUTTON FÜR DIE AKTIONEN! */}
+              <option value="aktionen">🚀 Aktionen & Events (Nur Titel & Kurzbeschreibung!)</option>
+            </select>
+          </div>
+          
+          <div class="flex items-end pb-3">
+            <label class="flex items-center gap-2 cursor-pointer bg-red-500/10 border border-red-500/20 px-4 py-3 rounded-lg text-red-400 hover:bg-red-500/20 transition-colors">
+              <input type="checkbox" id="autoOverwrite" class="w-5 h-5 accent-red-500 rounded bg-slate-900">
+              <span class="font-bold text-sm">Gefahr: Auch volle Felder neu übersetzen</span>
+            </label>
+          </div>
+        </div>
+
+        <button id="autoFillBtn" class="w-full bg-[#F8D800] hover:bg-yellow-400 text-slate-900 font-bold py-4 rounded-xl transition-colors shadow-md flex justify-center items-center gap-2 text-lg">
+          <span>🔍</span> Scan & Auto-Fill starten
+        </button>
+
+        <div class="mt-6">
+          <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">System-Protokoll</label>
+          <div id="terminalLog" class="w-full bg-black border border-slate-700 rounded-xl p-4 text-green-400 font-mono text-sm h-48 overflow-y-auto whitespace-pre-wrap">System bereit. Wartet auf Eingabe...</div>
+        </div>
+      </div>
+
+      <h2 class="text-xl font-bold text-[#329A44] mb-4">📝 2. Manuelle Box-Übersetzung (Für lange Artikel-Texte)</h2>
+      <div class="grid lg:grid-cols-2 gap-8 items-start mb-12">
+        
+        <div class="bg-slate-800 p-6 rounded-2xl border border-slate-700 shadow-xl sticky top-8">
+          <label class="block text-xs font-bold text-[#329A44] uppercase tracking-wider mb-2">Deutscher Originaltext</label>
+          <textarea id="sourceText" class="w-full bg-slate-900 border border-slate-600 rounded-xl p-4 text-white focus:border-[#329A44] outline-none transition-colors" rows="5" placeholder="Füge hier Text aus Keystatic (z.B. Markdown-Artikel) ein..."></textarea>
+          
+          <button id="translateBtn" class="w-full bg-[#329A44] hover:bg-[#287a36] text-white font-bold py-4 rounded-xl mt-4 transition-transform hover:-translate-y-1 shadow-lg">
+            ✨ Generieren (Kurd / Eng / Türk)
+          </button>
+        </div>
+
+        <div class="space-y-4">
+          <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 relative">
+            <div class="flex justify-between items-center mb-2">
+              <label class="text-xs font-bold text-[#F8D800] uppercase tracking-wider">☀️ Kurdisch</label>
+              <button onclick="copyText('outKu')" class="text-xs bg-slate-700 hover:bg-slate-600 px-3 py-1 rounded text-white">Kopieren</button>
+            </div>
+            <textarea id="outKu" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-3 text-white outline-none min-h-[80px] resize-none" readonly></textarea>
+          </div>
+
+          <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 relative">
+            <div class="flex justify-between items-center mb-2">
+              <label class="text-xs font-bold text-blue-400 uppercase tracking-wider">🇬🇧 Englisch</label>
+              <button onclick="copyText('outEn')" class="text-xs bg-slate-700 hover:bg-slate-600 px-3 py-1 rounded text-white">Kopieren</button>
+            </div>
+            <textarea id="outEn" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-3 text-white outline-none min-h-[80px] resize-none" readonly></textarea>
+          </div>
+
+          <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 relative">
+            <div class="flex justify-between items-center mb-2">
+              <label class="text-xs font-bold text-red-400 uppercase tracking-wider">🇹🇷 Türkisch</label>
+              <button onclick="copyText('outTr')" class="text-xs bg-slate-700 hover:bg-slate-600 px-3 py-1 rounded text-white">Kopieren</button>
+            </div>
+            <textarea id="outTr" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-3 text-white outline-none min-h-[80px] resize-none" readonly></textarea>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script is:inline>
+      function copyText(id) {
+        const text = document.getElementById(id).value;
+        if(text) { navigator.clipboard.writeText(text); alert('Kopiert!'); }
+      }
+
+      const btn = document.getElementById('translateBtn');
+      const source = document.getElementById('sourceText');
+      const boxes = { 'Kurdisch (Kurmanci)': document.getElementById('outKu'), 'Englisch': document.getElementById('outEn'), 'Türkisch': document.getElementById('outTr') };
+
+      btn.addEventListener('click', async () => {
+        const text = source.value.trim();
+        if(!text) return alert('Bitte gib zuerst Text ein!');
+        btn.disabled = true; btn.innerHTML = '⏳ Arbeite...';
+        
+        for (const [lang, box] of Object.entries(boxes)) {
+          box.value = 'Übersetze... ⏳';
+          try {
+            const res = await fetch('/api/translate', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ text: text, targetLang: lang })
+            });
+            const data = await res.json();
+            box.value = data.success ? data.translation : '❌ Fehler';
+          } catch(e) { box.value = '❌ Server Offline (Ollama checken)'; }
+        }
+        btn.disabled = false; btn.innerHTML = '✨ Generieren (Kurd / Eng / Türk)';
+      });
+
+      const autoBtn = document.getElementById('autoFillBtn');
+      const terminal = document.getElementById('terminalLog');
+      const targetSelect = document.getElementById('autoTarget');
+      const overwriteCheck = document.getElementById('autoOverwrite');
+
+      function addLog(msg, isError = false) {
+        const span = document.createElement('div');
+        span.className = isError ? 'text-red-400' : 'text-green-400';
+        span.innerText = `> ${msg}`;
+        terminal.appendChild(span);
+        terminal.scrollTop = terminal.scrollHeight;
+      }
+
+      autoBtn.addEventListener('click', async () => {
+        autoBtn.disabled = true;
+        terminal.innerHTML = ''; 
+        addLog('Initialisiere Scanner...');
+        addLog(`Ziel: ${targetSelect.options[targetSelect.selectedIndex].text}`);
+        addLog('Verbinde mit lokaler GPU (Llama 3.2)...');
+        addLog('Das dauert jetzt einen Moment, bitte warten ⏳');
+        
+        try {
+          const res = await fetch('/api/autofill', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ target: targetSelect.value, overwrite: overwriteCheck.checked })
+          });
+          
+          if (!res.ok) {
+            const errText = await res.text();
+            addLog(`KRITISCHER FEHLER: Server gab Status ${res.status} zurück! (${errText})`, true);
+          } else {
+            const data = await res.json();
+            if(data.error) {
+              addLog(`FEHLER: ${data.error}`, true);
+            } else {
+              data.logs.forEach(logLine => addLog(logLine));
+              addLog(`\n[ERFOLG] Vorgang abgeschlossen! ${data.count} Felder wurden übersetzt.`);
+            }
+          }
+        } catch(e) {
+          addLog(`KRITISCHER FEHLER: Backend nicht erreichbar. Läuft der Astro Server?`, true);
+        }
+        autoBtn.disabled = false;
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,458 @@
+---
+import { getCollection, getEntry } from 'astro:content';
+import '../styles/global.css';
+
+// 🚀 Der Titanium-Übersetzer für Aktionen & Events
+const getAktionTrans = (item: any, feld: 'titel' | 'kurzbeschreibung', lang: string) => {
+  if (lang === 'de') {
+    if (feld === 'titel') return item.data.titel || '';
+    if (feld === 'kurzbeschreibung') return item.data.details?.kurzbeschreibung || '';
+  }
+  
+  const trans = item.data.uebersetzungen?.[lang]?.[feld];
+  if (trans && typeof trans === 'string' && trans.trim() !== '') return trans;
+
+  if (feld === 'titel') return item.data.titel || '';
+  if (feld === 'kurzbeschreibung') return item.data.details?.kurzbeschreibung || '';
+  return '';
+};
+
+const { currentLang } = Astro.props;
+
+const uiEntry = (await getEntry('ui_texte', currentLang)) as any;
+const fallbackEntry = (await getEntry('ui_texte', 'de')) as any;
+const ui = uiEntry?.data || fallbackEntry?.data || {};
+
+const navKalender = ui.navKalender || 'Kalender';
+const navProjekte = ui.navProjekte || 'Projekte';
+const navBuendnisse = ui.navBuendnisse || 'Bündnisse';
+const navSpenden = ui.navSpenden || 'Unterstützen';
+const heroBtn1 = ui.heroBtn1 || 'Aktuelle Termine';
+const heroBtn2 = ui.heroBtn2 || 'Mitmachen';
+const btnDetails = ui.btnDetails || 'Details →';
+const btnArchiv = ui.btnArchiv || 'Aktions-Archiv →';
+const btnGoogleCal = ui.btnGoogleCal || '+ Google Cal';
+const btnAppleCal = ui.btnAppleCal || '+ Apple / Outlook';
+const statusAbgeschlossen = ui.statusAbgeschlossen || 'Abgeschlossen';
+const spendenBank = ui.spendenBank || 'Banküberweisung';
+const tickerPrefix = ui.tickerPrefix || 'Aktuelles:';
+const kalenderLeer = ui.kalenderLeer || 'Aktuell stehen keine neuen Termine an.';
+
+const getTrans = (obj: any, feld: string, lang: string) => {
+  if (!obj) return '';
+  const data = obj.data !== undefined ? obj.data : obj; 
+  if (lang === 'de') return data[feld] || '';
+  const uebersetzung = data.uebersetzungen?.[lang]?.[feld];
+  return uebersetzung && String(uebersetzung).trim() !== '' ? uebersetzung : (data[feld] || '');
+};
+
+// 🚀 WIR LADEN NUR NOCH DIE MASTER-DATENBANK!
+const alleAktionen = await getCollection('aktionen');
+const alleBuendnisse = await getCollection('buendnisse');
+
+// ⏱️ AUTO-ARCHIV LOGIK: Wir holen uns den heutigen Tag um 00:00 Uhr
+const heute = new Date();
+heute.setHours(0, 0, 0, 0);
+
+// 🚀 VERTEILER: Wer darf in den Kalender? Wer darf zu den Projekten?
+const kalenderItems = alleAktionen.filter(item => {
+  const anzeigeOrt = item.data.anzeige_ort || [];
+  if (!anzeigeOrt.includes('kalender')) return false; 
+  
+  if (anzeigeOrt.includes('immer_anzeigen')) return true; // 🚀 Die neue Ausnahme!
+
+  if (item.data.zeitplanung?.discriminant === 'einmalig' && item.data.zeitplanung.value.datum) {
+    const eventDate = new Date(item.data.zeitplanung.value.datum);
+    if (eventDate < heute) return false; 
+  }
+  return true;
+}).sort((a, b) => {
+  const dateA = a.data.zeitplanung?.value?.datum ? new Date(a.data.zeitplanung.value.datum).getTime() : 9999999999999;
+  const dateB = b.data.zeitplanung?.value?.datum ? new Date(b.data.zeitplanung.value.datum).getTime() : 9999999999999;
+  return dateA - dateB;
+});
+
+const projekteItems = alleAktionen.filter(item => {
+  const anzeigeOrt = item.data.anzeige_ort || [];
+  if (!anzeigeOrt.includes('projekte')) return false; 
+  
+  if (anzeigeOrt.includes('immer_anzeigen')) return true; // 🚀 Die neue Ausnahme!
+
+  if (item.data.zeitplanung?.discriminant === 'einmalig' && item.data.zeitplanung.value.datum) {
+    const eventDate = new Date(item.data.zeitplanung.value.datum);
+    if (eventDate < heute) return false; 
+  }
+  return true;
+}).slice(0, 4);
+
+// --- Settings laden ---
+const tickerFiles = import.meta.glob('../content/ticker.json', { eager: true });
+const tickerList = Object.values(tickerFiles);
+const ticker = tickerList.length > 0 ? (tickerList[0] as any) : { anzeigen: false, text: "" };
+
+const einstellungenFiles = import.meta.glob('../content/einstellungen/startseite.json', { eager: true });
+const rawConfig = Object.values(einstellungenFiles).length > 0 ? (Object.values(einstellungenFiles)[0] as any) : {};
+
+const globalFiles = import.meta.glob('../content/settings/global.json', { eager: true });
+const globalText = Object.values(globalFiles).length > 0 ? (Object.values(globalFiles)[0] as any) : {};
+
+const metaTitle = globalText.metaTitle || 'PIRE Krefeld | Solidarische Brücken bauen';
+const faviconPath = globalText.favicon ? `${globalText.favicon}?v=titanium2` : '/favicon.png?v=titanium2';
+
+const config = {
+  sichtbarkeit: rawConfig.sichtbarkeit || { kalender: true, projekte: true, buendnisse: true, spenden: true },
+  kopfbereich: rawConfig.kopfbereich || { logo: "", weisses_logo: false, hero_headline: "Krefelds Brücke für Zusammenhalt & Solidarität", hero_text: "" },
+  ueberschriften: rawConfig.ueberschriften || { kalender: "Kalender & Termine", projekte: "Aktuelle Projekte & Angebote", buendnisse: "Bündnisarbeit & Netzwerk", buendnisse_text: "", spenden: "Unterstützen & Spenden" },
+  social_feed: rawConfig.social_feed || { anzeigen: false, ueberschrift: "", embed_code: "" },
+  spenden: rawConfig.spenden || { text: "", opencollective: "", paypal: "", liberapay: "", iban: "" },
+  mitmachen: rawConfig.mitmachen || { ueberschrift: "Aktiv werden", beschreibung: "", button_text: "", button_link: "" },
+  socials: rawConfig.socials || [],
+  footer: rawConfig.footer || { ueberschrift_kontakt: "Kontakt", text_kontakt: "", label_email: "", kontakt_email: "", label_standort: "", standort_text: "", ueberschrift_werte: "", werte_statement: "", copyright_text: "" }
+};
+
+const socialsMitmachen = config.socials.filter((s: any) => s.anzeigen_in?.includes('mitmachen') && s.url);
+const socialsFooter = config.socials.filter((s: any) => s.anzeigen_in?.includes('footer') && s.url);
+
+const getSocialConfig = (plattform: string) => {
+  if (plattform === 'discord') return { icon: '🎮', name: 'Discord', color: 'bg-[#5865F2] hover:bg-[#4752C4] text-white' };
+  if (plattform === 'whatsapp') return { icon: '💬', name: 'WhatsApp', color: 'bg-[#25D366] hover:bg-[#1DA851] text-white' };
+  if (plattform === 'instagram') return { icon: '📸', name: 'Instagram', color: 'bg-gradient-to-tr from-[#FD1D1D] to-[#833AB4] hover:opacity-90 text-white' };
+  if (plattform === 'telegram') return { icon: '✈️', name: 'Telegram', color: 'bg-[#229ED9] hover:bg-[#1b84b6] text-white' };
+  return { icon: '🔗', name: 'Link', color: 'bg-slate-700 hover:bg-slate-800 text-white' };
+};
+
+const formatText = (text: string | undefined | null) => { if (!text) return ''; return text.replace(/\n/g, '<br>'); };
+
+const getGoogleCalLink = (titel: string, datum: any, ort: string) => {
+  if (!datum) return '#';
+  let dateString = '';
+  if (datum instanceof Date) {
+    const y = datum.getFullYear();
+    const m = String(datum.getMonth() + 1).padStart(2, '0');
+    const d = String(datum.getDate()).padStart(2, '0');
+    dateString = `${y}${m}${d}`;
+  } else if (typeof datum === 'string') {
+    dateString = datum.replace(/-/g, '');
+  } else {
+    return '#';
+  }
+  return `https://www.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(titel)}&dates=${dateString}/${dateString}&location=${encodeURIComponent(ort)}`;
+};
+
+// 🚀 DER TITANIUM ICS GENERATOR
+const getIcsLink = (titel: string, datum: any, ort: string) => {
+  if (!datum) return '#';
+  let dateString = '';
+  if (datum instanceof Date) {
+    const y = datum.getFullYear();
+    const m = String(datum.getMonth() + 1).padStart(2, '0');
+    const d = String(datum.getDate()).padStart(2, '0');
+    dateString = `${y}${m}${d}`;
+  } else if (typeof datum === 'string') {
+    dateString = datum.replace(/-/g, '');
+  } else { return '#'; }
+  
+  const icsData = `BEGIN:VCALENDAR\nVERSION:2.0\nBEGIN:VEVENT\nDTSTART;VALUE=DATE:${dateString}\nSUMMARY:${titel}\nLOCATION:${ort || ''}\nEND:VEVENT\nEND:VCALENDAR`;
+  return `data:text/calendar;charset=utf8,${encodeURIComponent(icsData)}`;
+};
+
+// 🚀 Das fehlerfreie Titanium-Badge
+const renderBadge = (item: any) => {
+  const badgeObj = item?.data?.status_badge || item?.status_badge; 
+  
+  if (badgeObj?.discriminant === 'none') return ''; 
+
+  if (badgeObj?.discriminant === 'custom') {
+    const c = badgeObj.value.farbe;
+    const text = badgeObj.value.text || 'Info';
+    if (c === 'green') return `<span class="bg-[#329A44]/15 text-[#287a36] border-[#329A44]/30 text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-full border shrink-0">${text}</span>`;
+    if (c === 'yellow') return `<span class="bg-[#F8D800]/20 text-[#b39b00] border-[#F8D800]/40 text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-full border shrink-0">${text}</span>`;
+    if (c === 'red') return `<span class="bg-[#E30A17]/10 text-[#E30A17] border-[#E30A17]/20 text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-full border shrink-0">${text}</span>`;
+    return `<span class="bg-slate-100 text-slate-700 border-slate-200 text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-full border shrink-0">${text}</span>`;
+  }
+  
+  const heute = new Date();
+  heute.setHours(0, 0, 0, 0);
+  let istVergangen = false;
+
+  const zeitplanung = item?.data?.zeitplanung || item?.zeitplanung;
+  if (zeitplanung?.discriminant === 'einmalig' && zeitplanung.value.datum) {
+    const eventDate = new Date(zeitplanung.value.datum);
+    if (eventDate < heute) istVergangen = true;
+  }
+
+  const anzeigeOrt = item?.data?.anzeige_ort || item?.anzeige_ort || [];
+
+  if (anzeigeOrt.includes('archiv') || istVergangen) {
+    return `<span class="bg-slate-100 text-slate-600 border-slate-300 text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-full border shrink-0">Abgeschlossen</span>`;
+  }
+  
+  return `<span class="bg-[#329A44]/15 text-[#287a36] border-[#329A44]/30 text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-full border shrink-0">Aktiv</span>`;
+};
+---
+
+<html lang={currentLang} class="scroll-smooth">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{metaTitle}</title>
+    <link rel="icon" href={faviconPath} />
+    <link rel="shortcut icon" href={faviconPath} />
+    <link rel="apple-touch-icon" href={faviconPath} />
+
+    <style>
+      @media (max-width: 768px) {
+        .ticker-wrap { width: 100%; overflow: hidden; white-space: nowrap; }
+        .ticker-text { display: inline-block; padding-left: 100%; animation: marquee 20s linear infinite; }
+      }
+      @keyframes marquee { 0% { transform: translate(0, 0); } 100% { transform: translate(-100%, 0); } }
+      .rich-text a { color: #329A44; text-decoration: underline; }
+      .rich-text b, .rich-text strong { font-weight: 800; color: #0f172a; }
+      .rich-text i, .rich-text em { font-style: italic; }
+      .footer-soft-text a { color: #329A44; text-decoration: underline; }
+      .footer-soft-text b, .footer-soft-text strong { font-weight: 800; color: #ffffff; }
+      .footer-soft-text i, .footer-soft-text em { font-style: italic; }
+    </style>
+  </head>
+  
+  <body class="bg-slate-50 text-slate-800 font-sans antialiased selection:bg-[#329A44] selection:text-white">
+    
+    <header class="fixed w-full top-0 z-50 flex flex-col shadow-sm">
+      <div class="bg-white/95 backdrop-blur-md border-b border-slate-200">
+        <div class="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
+          
+          <nav class="flex gap-4 md:gap-10 text-sm md:text-base font-semibold text-slate-600">
+            {config.sichtbarkeit.kalender && <a href="#kalender" class="hover:text-[#329A44] transition-colors">{navKalender}</a>}
+            {config.sichtbarkeit.projekte && <a href="#projekte" class="hover:text-[#329A44] transition-colors">{navProjekte}</a>}
+            {config.sichtbarkeit.buendnisse && <a href="#buendnisse" class="hover:text-[#329A44] transition-colors">{navBuendnisse}</a>}
+            {config.sichtbarkeit.spenden && <a href="#spenden" class="hover:text-[#329A44] transition-colors">{navSpenden}</a>}
+          </nav>
+
+          <div class="flex gap-2 text-xs font-bold text-slate-400">
+            <a href="/" onclick="document.cookie='pire_lang=de; path=/; max-age=31536000'" class={`hover:text-[#329A44] ${currentLang === 'de' ? 'text-[#329A44]' : ''}`}>DE</a> |
+            <a href="/ku/" onclick="document.cookie='pire_lang=ku; path=/; max-age=31536000'" class={`hover:text-[#329A44] ${currentLang === 'ku' ? 'text-[#329A44]' : ''}`}>KU</a> |
+            <a href="/en/" onclick="document.cookie='pire_lang=en; path=/; max-age=31536000'" class={`hover:text-[#329A44] ${currentLang === 'en' ? 'text-[#329A44]' : ''}`}>EN</a> |
+            <a href="/tr/" onclick="document.cookie='pire_lang=tr; path=/; max-age=31536000'" class={`hover:text-[#329A44] ${currentLang === 'tr' ? 'text-[#329A44]' : ''}`}>TR</a>
+          </div>
+
+        </div>
+      </div>
+      {ticker.anzeigen && (
+        <div class="bg-red-50/95 backdrop-blur-md border-b border-red-100 flex items-center py-2">
+          <div class="max-w-6xl mx-auto px-6 w-full flex items-center">
+            <span class="text-[#E30A17] font-bold uppercase text-xs md:text-sm flex items-center gap-2 pr-4 shrink-0">
+              <span class="w-2 h-2 rounded-full bg-[#E30A17] animate-pulse"></span> {tickerPrefix}
+            </span>
+            <div class="ticker-wrap flex-grow md:hidden"><div class="ticker-text text-xs md:text-sm font-medium" set:html={formatText(getTrans(ticker, 'text', currentLang))}></div></div>
+            <div class="hidden md:block flex-grow text-sm font-medium truncate" set:html={formatText(getTrans(ticker, 'text', currentLang))}></div>
+          </div>
+        </div>
+      )}
+    </header>
+
+    <main class="pt-36">
+      <section class="max-w-6xl mx-auto px-6 pb-16 md:pb-24 flex flex-col items-center text-center">
+        <div class={config.kopfbereich.weisses_logo ? "bg-slate-900 p-8 md:p-10 rounded-2xl mb-12 shadow-xl inline-block" : "mb-12"}>
+          <img src={config.kopfbereich.logo || "/logo.png"} alt="PIRE Logo" class="w-72 md:w-96 drop-shadow-xl" />
+        </div>
+        
+        <h1 class="text-4xl md:text-6xl font-extrabold text-slate-900 tracking-tight mb-6 leading-tight" set:html={getTrans(config.kopfbereich, 'hero_headline', currentLang)}></h1>
+        <p class="rich-text text-lg md:text-xl text-slate-600 max-w-2xl mb-10 leading-relaxed" set:html={formatText(getTrans(config.kopfbereich, 'hero_text', currentLang))}></p>
+        
+        <div class="flex flex-col sm:flex-row gap-4">
+          {config.sichtbarkeit.kalender && <a href="#kalender" class="px-8 py-4 bg-[#329A44] hover:bg-[#287a36] text-white font-bold rounded-lg transition-all shadow-md">{heroBtn1}</a>}
+          {config.sichtbarkeit.spenden && <a href="#spenden" class="px-8 py-4 bg-white hover:bg-slate-50 text-slate-700 font-bold rounded-lg border border-slate-300 shadow-sm">{heroBtn2}</a>}
+        </div>
+      </section>
+
+      {/* ================= KALENDER ================= */}
+      {config.sichtbarkeit.kalender && (
+        <section id="kalender" class="max-w-4xl mx-auto px-6 py-16">
+          <div class="flex items-center gap-4 mb-10"><h2 class="text-3xl font-bold text-slate-900">{getTrans(config.ueberschriften, 'kalender', currentLang)}</h2><div class="h-[2px] flex-grow bg-slate-200"></div></div>
+          <div class="space-y-6">
+            {kalenderItems.length === 0 ? (
+              <p class="text-slate-500 italic">{kalenderLeer}</p>
+            ) : (
+              kalenderItems.map(item => {
+                const zeit = item.data.zeitplanung;
+                const isEinmalig = zeit?.discriminant === 'einmalig';
+                const isWiederkehrend = zeit?.discriminant === 'wiederkehrend';
+                const datumValue = isEinmalig ? zeit.value.datum : null;
+                const uhrzeit = isEinmalig ? zeit.value.uhrzeit : (isWiederkehrend ? zeit.value.uhrzeit : '');
+
+                // 🚀 NEUER HELFER FÜR DEN TITEL
+                const safeTitel = getAktionTrans(item, 'titel', currentLang) || 'Event';
+                let anzeigeTag = '??'; let anzeigeMonat = '??';
+
+                if (isEinmalig && datumValue) {
+                  const d = new Date(datumValue);
+                  if (!isNaN(d.getTime())) {
+                    anzeigeTag = d.getDate() + '.';
+                    const monate = ['Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember'];
+                    anzeigeMonat = monate[d.getMonth()];
+                  }
+                }
+
+                return (
+                  <div class="flex flex-col md:flex-row bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm hover:border-[#F8D800] hover:shadow-md transition-all group relative">
+                    <div class="bg-slate-50 border-b md:border-b-0 md:border-r border-slate-200 p-6 flex flex-col items-center justify-center min-w-[160px] text-center">
+                      {isWiederkehrend && <span class="text-lg font-extrabold text-[#E30A17] leading-tight uppercase tracking-wide">{zeit.value.rhythmus}</span>}
+                      {zeit?.discriminant === 'dauerhaft' && <span class="text-lg font-extrabold text-[#E30A17] leading-tight uppercase tracking-wide">Dauerhaft</span>}
+                      {isEinmalig && (
+                        <>
+                          <span class="text-sm font-bold text-[#E30A17] uppercase tracking-widest">{anzeigeMonat}</span>
+                          <span class="text-5xl font-extrabold text-slate-900 mt-1">{anzeigeTag}</span>
+                        </>
+                      )}
+                      {uhrzeit && <span class="text-sm text-slate-500 font-medium mt-2">{uhrzeit}</span>}
+                    </div>
+                    
+                    <div class="p-6 md:p-8 flex-grow">
+                      <div class="flex justify-between items-start mb-2" set:html={renderBadge(item)}></div>
+                      
+                      {/* 🚀 NEUER HELFER FÜR TITEL UND BESCHREIBUNG */}
+                      <h3 class="text-2xl font-bold text-slate-900 mb-2 group-hover:text-[#F8D800] transition-colors">{getAktionTrans(item, 'titel', currentLang)}</h3>
+                      <p class="rich-text text-slate-600 mb-4" set:html={formatText(getAktionTrans(item, 'kurzbeschreibung', currentLang))}></p>
+                      
+                      <div class="flex flex-wrap items-center gap-4 mt-6 border-t border-slate-100 pt-4">
+                        {item.data.details?.ort && <div class="text-sm font-bold text-slate-500 flex items-center gap-2">{item.data.details.ort}</div>}
+                        
+                        <div class="ml-auto flex flex-wrap gap-2">
+                          <a href={`/aktionen/${item.id}`} class="text-xs font-bold bg-[#329A44]/10 text-[#329A44] hover:bg-[#329A44]/20 py-2 px-4 rounded-lg transition-colors shrink-0">
+                            {btnDetails}
+                          </a>
+                          {isEinmalig && datumValue && (
+                            <>
+                              <a href={getGoogleCalLink(safeTitel, datumValue, item.data.details?.ort)} target="_blank" class="text-xs font-bold bg-slate-100 text-slate-700 hover:bg-slate-200 py-2 px-4 rounded-lg transition-colors shrink-0">
+                                {btnGoogleCal}
+                              </a>
+                              <a href={getIcsLink(safeTitel, datumValue, item.data.details?.ort)} download={`${item.id}.ics`} class="text-xs font-bold bg-slate-100 text-slate-700 hover:bg-slate-200 py-2 px-4 rounded-lg transition-colors shrink-0">
+                                {btnAppleCal}
+                              </a>
+                            </>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })
+            )}
+          </div>
+        </section>
+      )}
+
+      {/* ================= PROJEKTE ================= */}
+      {config.sichtbarkeit.projekte && (
+        <section id="projekte" class="bg-slate-100 py-16 border-y border-slate-200">
+          <div class="max-w-6xl mx-auto px-6">
+            <div class="flex items-center gap-4 mb-10"><h2 class="text-3xl font-bold text-slate-900">{getTrans(config.ueberschriften, 'projekte', currentLang)}</h2><div class="h-[2px] flex-grow bg-slate-300"></div></div>
+            <div class="grid md:grid-cols-2 gap-8 mb-10">
+              {projekteItems.map(item => {
+                return (
+                  <a href={`/aktionen/${item.id}`} class="bg-white border-2 border-slate-200 p-8 rounded-2xl hover:border-[#329A44] hover:shadow-lg transition-all group block flex flex-col h-full">
+                    <div class="mb-4 inline-block self-start" set:html={renderBadge(item)}></div>
+                    {/* 🚀 NEUER HELFER FÜR TITEL UND BESCHREIBUNG */}
+                    <h3 class="text-2xl font-bold text-slate-900 mb-3 group-hover:text-[#329A44]">{getAktionTrans(item, 'titel', currentLang)}</h3>
+                    <p class="rich-text text-slate-600 mb-6 flex-grow" set:html={formatText(getAktionTrans(item, 'kurzbeschreibung', currentLang))}></p>
+                    
+                    {item.data.fakten && item.data.fakten.length > 0 && (
+                      <div class="bg-slate-50 p-4 rounded-xl mb-6 space-y-2 border border-slate-100">
+                        {item.data.fakten.map((fakt: any) => (
+                          <div class="text-sm flex gap-2 text-slate-700"><span>{fakt.icon}</span> <strong>{fakt.bezeichnung}:</strong> {fakt.wert}</div>
+                        ))}
+                      </div>
+                    )}
+                    <span class="text-sm font-bold text-[#329A44] mt-auto">{btnDetails}</span>
+                  </a>
+                );
+              })}
+            </div>
+            <div class="text-center"><a href="/archiv" class="inline-block px-6 py-3 border border-slate-300 text-slate-600 font-bold rounded-lg hover:bg-slate-200">{btnArchiv}</a></div>
+          </div>
+        </section>
+      )}
+
+      {/* ================= BÜNDNISSE & SPENDEN BLEIBEN GLEICH ================= */}
+      {config.sichtbarkeit.buendnisse && (
+        <section id="buendnisse" class="py-20">
+          <div class="max-w-6xl mx-auto px-6">
+            <div class="flex items-center gap-4 mb-12"><h2 class="text-3xl font-bold text-slate-900">{getTrans(config.ueberschriften, 'buendnisse', currentLang)}</h2><div class="h-[2px] flex-grow bg-slate-300"></div></div>
+            <p class="rich-text text-slate-600 mb-10 max-w-3xl text-lg" set:html={formatText(getTrans(config.ueberschriften, 'buendnisse_text', currentLang))}></p>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12 items-end justify-center">
+              {alleBuendnisse.map(buendnis => (
+                <a href={buendnis.data.link || '#'} target="_blank" rel="noopener noreferrer" class="flex flex-col items-center justify-end gap-3 transition-all group text-center opacity-75 hover:opacity-100 hover:scale-105 h-full">
+                  {buendnis.data.logo ? (
+                    <>
+                      <img src={buendnis.data.logo} class={`max-h-16 md:max-h-20 object-contain grayscale group-hover:grayscale-0 transition-all ${buendnis.data.weisses_logo ? 'bg-slate-900 p-3 rounded-xl' : ''}`} alt={buendnis.data.name} />
+                      <span class="text-xs font-bold text-slate-500 group-hover:text-[#329A44] transition-colors">{buendnis.data.name}</span>
+                    </>
+                  ) : (
+                    <span class="text-slate-700 font-bold text-lg group-hover:text-[#329A44] transition-colors">{buendnis.data.name}</span>
+                  )}
+                </a>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {config.sichtbarkeit.spenden && (
+        <section id="spenden" class="bg-slate-100 border-y border-slate-200 py-16 md:py-24">
+          <div class="max-w-6xl mx-auto px-6">
+            <div class="flex items-center gap-4 mb-12"><h2 class="text-3xl font-bold text-slate-900">{getTrans(config.ueberschriften, 'spenden', currentLang)}</h2><div class="h-[2px] flex-grow bg-slate-300"></div></div>
+            <div class="grid lg:grid-cols-2 gap-8 items-stretch">
+              <div class="bg-white p-8 md:p-12 rounded-2xl shadow-sm border border-slate-200 flex flex-col justify-center h-full">
+                <h3 class="text-2xl font-bold text-slate-900 mb-4">{ui.spendenSubtitle || 'Gemeinsam Brücken bauen.'}</h3>
+                <p class="rich-text text-slate-600 mb-8 text-lg" set:html={formatText(getTrans(config.spenden, 'text', currentLang))}></p>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  {config.spenden.opencollective && <a href={config.spenden.opencollective} target="_blank" class="flex justify-center items-center text-center bg-[#F8D800] text-slate-900 font-bold px-4 py-4 rounded-xl hover:bg-yellow-400 transition-colors shadow-sm">Via Open Collective</a>}
+                  {config.spenden.paypal && <a href={config.spenden.paypal} target="_blank" class="flex justify-center items-center text-center bg-[#00457C] text-white font-bold px-4 py-4 rounded-xl hover:bg-[#00335c] transition-colors shadow-sm">Via PayPal</a>}
+                  {config.spenden.liberapay && <a href={config.spenden.liberapay} target="_blank" class="flex justify-center items-center text-center bg-[#F6C915] text-slate-900 font-bold px-4 py-4 rounded-xl hover:bg-yellow-500 transition-colors shadow-sm">Via Liberapay</a>}
+                  {config.spenden.iban && <div class="flex flex-col justify-center items-center bg-slate-50 border border-slate-200 p-3 rounded-xl text-center sm:col-span-2 mt-2"><span class="block text-xs text-slate-500 uppercase font-bold mb-1">{spendenBank}</span><code class="text-slate-800 font-mono font-bold text-sm" set:html={formatText(config.spenden.iban)}></code></div>}
+                </div>
+              </div>
+
+              <div class="bg-[#329A44] p-8 md:p-12 rounded-2xl text-center shadow-lg border border-[#287a36] flex flex-col justify-center h-full">
+                <h3 class="text-2xl md:text-3xl font-extrabold text-white mb-4">{getTrans(config.mitmachen, 'ueberschrift', currentLang)}</h3>
+                <p class="text-white/90 mb-8 text-lg" set:html={formatText(getTrans(config.mitmachen, 'beschreibung', currentLang))}></p>
+                <div class="flex flex-col sm:flex-row flex-wrap justify-center gap-4">
+                  {config.mitmachen.button_text && config.mitmachen.button_link && <a href={config.mitmachen.button_link} target="_blank" class="bg-white text-[#329A44] font-bold px-8 py-4 rounded-xl hover:bg-slate-50 transition-transform hover:-translate-y-1 shadow-md w-full sm:w-auto">{getTrans(config.mitmachen, 'button_text', currentLang)}</a>}
+                  {socialsMitmachen.map((s: any) => {
+                    const style = getSocialConfig(s.plattform);
+                    return <a href={s.url} target="_blank" class={`${style.color} font-bold px-8 py-4 rounded-xl transition-transform hover:-translate-y-1 shadow-md flex items-center justify-center gap-2 w-full sm:w-auto`}><span class="text-xl">{style.icon}</span> {style.name}</a>;
+                  })}
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
+
+      <section id="kontakt" class="bg-slate-900 pt-20 pb-8">
+        <div class="max-w-6xl mx-auto px-6">
+          <div class="grid md:grid-cols-2 gap-12 mb-16">
+            <div>
+              <h2 class="text-2xl font-bold text-white mb-6">{getTrans(config.footer, 'ueberschrift_kontakt', currentLang)}</h2>
+              {config.footer.text_kontakt && <p class="footer-soft-text text-slate-400 mb-6 text-sm" set:html={formatText(getTrans(config.footer, 'text_kontakt', currentLang))}></p>}
+              <ul class="space-y-4 text-slate-400 mb-8">
+                {config.footer.label_email && config.footer.kontakt_email && <li class="flex items-center gap-3"><div><span class="block text-xs uppercase tracking-wider text-slate-500 font-bold" set:html={formatText(getTrans(config.footer, 'label_email', currentLang))}></span><a href={`mailto:${config.footer.kontakt_email}`} class="hover:text-white transition-colors text-white font-medium">{config.footer.kontakt_email}</a></div></li>}
+                {config.footer.label_standort && config.footer.standort_text && <li class="flex items-center gap-3 mt-4"><div><span class="block text-xs uppercase tracking-wider text-slate-500 font-bold" set:html={formatText(getTrans(config.footer, 'label_standort', currentLang))}></span><span class="text-white font-medium">{getTrans(config.footer, 'standort_text', currentLang)}</span></div></li>}
+              </ul>
+              {socialsFooter.length > 0 && <div class="flex flex-wrap gap-3">{socialsFooter.map((s: any) => {
+                const style = getSocialConfig(s.plattform);
+                return <a href={s.url} target="_blank" class={`${style.color} text-xs font-bold px-4 py-2 rounded-lg transition-transform hover:-translate-y-1 shadow-sm flex items-center gap-2`}><span>{style.icon}</span> {style.name}</a>;
+              })}</div>}
+            </div>
+            <div class="bg-slate-800 p-6 rounded-xl border border-slate-700 shadow-inner">
+              <h3 class="font-bold text-white mb-4" set:html={formatText(getTrans(config.footer, 'ueberschrift_werte', currentLang))}></h3>
+              <p class="footer-soft-text text-sm text-slate-400 leading-relaxed" set:html={formatText(getTrans(config.footer, 'werte_statement', currentLang))}></p>
+            </div>
+          </div>
+          <div class="border-t border-slate-800 pt-8 mt-8 text-center"><p class="footer-soft-text text-xs text-slate-500" set:html={formatText(getTrans(config.footer, 'copyright_text', currentLang))}></p></div>
+        </div>
+      </section>
+
+    </main>
+  </body>
+</html>

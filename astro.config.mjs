@@ -1,21 +1,39 @@
 import { defineConfig } from 'astro/config';
 import tailwind from '@astrojs/tailwind';
+import markdoc from '@astrojs/markdoc';
 import react from '@astrojs/react';
 import keystatic from '@keystatic/astro';
-import markdoc from '@astrojs/markdoc'; 
-
-// Wir prüfen, ob du lokal arbeitest ('dev')
-const isDev = process.argv.includes('dev');
 
 export default defineConfig({
-  output: 'static', 
-  
   integrations: [
-    react(),
-    markdoc(), // 🚀 Der wahre Held: Er liest die Texte.
-    tailwind(),
-    // 🚀 Der Türsteher: Lokal hast du dein Dashboard, 
-    // online wird Keystatic gelöscht. Kein Server, kein Adapter nötig!
-    ...(isDev ? [keystatic()] : [])
-  ]
+    react(), 
+    markdoc(), 
+    tailwind(), 
+    keystatic()
+  ],
+  
+  // 🚀 HIER STARTEN WIR DEN PLATIN-STANDARD MOTOR
+  i18n: {
+    // Die Standardsprache deiner Seite
+    defaultLocale: 'de',
+    
+    // Alle Sprachen, die wir in Zukunft unterstützen wollen
+    locales: ['de', 'ku', 'en', 'tr'],
+    
+    // Wie sollen die URLs aussehen?
+    routing: {
+      // 'de' bleibt auf der Hauptdomain (pire.de/), die anderen bekommen Ordner (pire.de/ku/)
+      prefixDefaultLocale: false,
+      
+      // Fallback-Strategie, wenn eine Seite noch nicht übersetzt ist
+      fallbackType: 'redirect',
+    },
+    
+    // Fallback-Regeln (Wenn jemand Türkisch sucht, aber es noch nicht da ist, zeige Deutsch)
+    fallback: {
+      ku: 'de',
+      tr: 'de',
+      en: 'de'
+    }
+  }
 });

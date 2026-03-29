@@ -2,36 +2,95 @@
 import { getCollection } from 'astro:content';
 import '../styles/global.css';
 
-const alleProjekte = await getCollection('projekte');
+// 1. 🚀 SPRACHE AUS COOKIE LESEN (Wichtig für das Archiv!)
+const cookieStr = Astro.request.headers.get('cookie') || '';
+const match = cookieStr.match(/pire_lang=([^;]+)/);
+const currentLang = match ? match[1] : 'de';
 
-// 🚀 Der gleiche smarte Helper wie auf der Startseite
-const getBadgeStyle = (statusObj: any) => {
-  if (!statusObj) return { text: 'Aktiv', css: 'bg-blue-100 text-blue-800 border-blue-200' };
-  const type = statusObj.discriminant;
-  
-  if (type === 'custom') {
-    const c = statusObj.value.farbe;
-    const text = statusObj.value.text || 'Custom';
-    if (c === 'green') return { text, css: 'bg-[#329A44]/15 text-[#287a36] border-[#329A44]/30' }; 
-    if (c === 'yellow') return { text, css: 'bg-[#F8D800]/20 text-[#b39b00] border-[#F8D800]/40' };
-    if (c === 'red') return { text, css: 'bg-[#E30A17]/10 text-[#E30A17] border-[#E30A17]/20' };   
-    return { text, css: 'bg-slate-100 text-slate-700 border-slate-200' };
+// 2. 🚀 Der Titanium-Übersetzer für Aktionen & Events
+const getAktionTrans = (item: any, feld: 'titel' | 'kurzbeschreibung', lang: string) => {
+  if (lang === 'de') {
+    if (feld === 'titel') return item.data.titel || '';
+    if (feld === 'kurzbeschreibung') return item.data.details?.kurzbeschreibung || '';
   }
   
-  if (type === 'dauerhaft') return { text: 'Dauerhaftes Angebot', css: 'bg-[#329A44]/15 text-[#287a36] border-[#329A44]/30' };
-  if (type === 'aktiv') return { text: 'Aktives Projekt', css: 'bg-blue-100 text-blue-800 border-blue-200' };
-  if (type === 'abgeschlossen') return { text: 'Abgeschlossen', css: 'bg-slate-100 text-slate-600 border-slate-300' };
-  if (type === 'abgebrochen') return { text: 'Abgebrochen', css: 'bg-[#E30A17]/10 text-[#E30A17] border-[#E30A17]/20' };
-  
-  return { text: type, css: 'bg-slate-100 text-slate-700 border-slate-200' };
+  const trans = item.data.uebersetzungen?.[lang]?.[feld];
+  if (trans && typeof trans === 'string' && trans.trim() !== '') return trans;
+
+  if (feld === 'titel') return item.data.titel || '';
+  if (feld === 'kurzbeschreibung') return item.data.details?.kurzbeschreibung || '';
+  return '';
 };
+
+const alleAktionen = await getCollection('aktionen');
+
+const heute = new Date();
+heute.setHours(0, 0, 0, 0);
+
+// 🚀 Favicon aus Keystatic laden
+const globalFiles = import.meta.glob('../content/settings/global.json', { eager: true });
+const globalText = Object.values(globalFiles).length > 0 ? (Object.values(globalFiles)[0] as any) : {};
+const faviconPath = globalText.favicon ? `${globalText.favicon}?v=titanium2` : '/favicon.png?v=titanium2';
+
+// 🚀 Das mitdenkende Titanium-Badge (Jetzt mit PIRE-Grün für "Aktiv")
+const renderBadge = (item: any) => {
+  const badgeObj = item?.data?.status_badge || item?.status_badge; 
+  
+  if (badgeObj?.discriminant === 'none') return ''; 
+
+  if (badgeObj?.discriminant === 'custom') {
+    const c = badgeObj.value.farbe;
+    const text = badgeObj.value.text || 'Info';
+    if (c === 'green') return `<span class="bg-[#329A44]/15 text-[#287a36] border-[#329A44]/30 text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-full border shrink-0">${text}</span>`;
+    if (c === 'yellow') return `<span class="bg-[#F8D800]/20 text-[#b39b00] border-[#F8D800]/40 text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-full border shrink-0">${text}</span>`;
+    if (c === 'red') return `<span class="bg-[#E30A17]/10 text-[#E30A17] border-[#E30A17]/20 text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-full border shrink-0">${text}</span>`;
+    return `<span class="bg-slate-100 text-slate-700 border-slate-200 text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-full border shrink-0">${text}</span>`;
+  }
+  
+  const heute = new Date();
+  heute.setHours(0, 0, 0, 0);
+  let istVergangen = false;
+
+  const zeitplanung = item?.data?.zeitplanung || item?.zeitplanung;
+  if (zeitplanung?.discriminant === 'einmalig' && zeitplanung.value.datum) {
+    const eventDate = new Date(zeitplanung.value.datum);
+    if (eventDate < heute) istVergangen = true;
+  }
+
+  const anzeigeOrt = item?.data?.anzeige_ort || item?.anzeige_ort || [];
+
+  if (anzeigeOrt.includes('archiv') || istVergangen) {
+    return `<span class="bg-slate-100 text-slate-600 border-slate-300 text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-full border shrink-0">Abgeschlossen</span>`;
+  }
+  
+  return `<span class="bg-[#329A44]/15 text-[#287a36] border-[#329A44]/30 text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-full border shrink-0">Aktiv</span>`;
+};
+
+// 🗄️ DER ARCHIV-FILTER
+const archivItems = alleAktionen.filter(item => {
+  const anzeigeOrt = item.data.anzeige_ort || [];
+  if (anzeigeOrt.includes('archiv')) return true;
+  
+  if (item.data.zeitplanung?.discriminant === 'einmalig' && item.data.zeitplanung.value.datum) {
+    const eventDate = new Date(item.data.zeitplanung.value.datum);
+    if (eventDate < heute) return true;
+  }
+  return false;
+}).sort((a, b) => {
+  const dateA = a.data.zeitplanung?.value?.datum ? new Date(a.data.zeitplanung.value.datum).getTime() : 0;
+  const dateB = b.data.zeitplanung?.value?.datum ? new Date(b.data.zeitplanung.value.datum).getTime() : 0;
+  return dateB - dateA; 
+});
 ---
 
-<html lang="de" class="scroll-smooth">
+<html lang={currentLang} class="scroll-smooth">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Archiv | PIRE Krefeld</title>
+    <link rel="icon" href={faviconPath} />
+    <link rel="shortcut icon" href={faviconPath} />
+    <link rel="apple-touch-icon" href={faviconPath} />
     <style>
       .rich-text a { color: #329A44; text-decoration: underline; }
       .rich-text b, .rich-text strong { font-weight: 800; color: #1e293b; }
@@ -47,30 +106,54 @@ const getBadgeStyle = (statusObj: any) => {
     </header>
 
     <main class="max-w-4xl mx-auto px-6 py-16">
-      <h1 class="text-4xl md:text-5xl font-extrabold text-slate-900 tracking-tight mb-4">Projekt-Archiv</h1>
+      <h1 class="text-4xl md:text-5xl font-extrabold text-slate-900 tracking-tight mb-4">🗄️ Projekt-Archiv</h1>
       <p class="text-lg text-slate-600 mb-12">Alle unsere bisherigen, aktuellen und dauerhaften Aktionen im Überblick.</p>
 
       <div class="grid gap-6">
-        {alleProjekte.map(projekt => {
-          const badge = getBadgeStyle(projekt.data.status);
+        {archivItems.length === 0 ? (
+          <div class="bg-white p-8 rounded-2xl border border-slate-200 text-center">
+            <p class="text-slate-500 italic">Das Archiv ist aktuell leer.</p>
+          </div>
+        ) : (
+          archivItems.map(item => {
+            // 🚀 JETZT NUTZEN WIR DEN NEUEN TRANSLATOR FÜR DEN TITEL!
+            const safeTitel = getAktionTrans(item, 'titel', currentLang) || 'Unbenanntes Event';
+            
+            let datumText = '';
+            if (item.data.zeitplanung?.discriminant === 'einmalig' && item.data.zeitplanung.value.datum) {
+              const d = new Date(item.data.zeitplanung.value.datum);
+              if (!isNaN(d.getTime())) {
+                const day = String(d.getDate()).padStart(2, '0');
+                const month = String(d.getMonth() + 1).padStart(2, '0');
+                const year = d.getFullYear();
+                datumText = `${day}.${month}.${year}`;
+              }
+            }
 
-          return (
-            <a href={`/projekte/${projekt.id}`} class="bg-white border border-slate-200 p-6 md:p-8 rounded-2xl hover:border-[#329A44] hover:shadow-lg transition-all group block">
-              <div class="flex flex-col md:flex-row md:items-start justify-between gap-4 mb-4">
-                <h3 class="text-2xl font-bold text-slate-900 group-hover:text-[#329A44] transition-colors">{projekt.data.titel}</h3>
+            // 🚀 UND HIER NUTZEN WIR IHN FÜR DIE KURZBESCHREIBUNG!
+            let description = getAktionTrans(item, 'kurzbeschreibung', currentLang);
+            if (description) {
+              description = description.replace(/\n/g, '<br>');
+            }
+
+            return (
+              <a href={`/aktionen/${item.id}`} class="bg-white border border-slate-200 p-6 md:p-8 rounded-2xl hover:border-[#329A44] hover:shadow-lg transition-all group block">
+                <div class="flex flex-col md:flex-row md:items-start justify-between gap-4 mb-4">
+                  <div>
+                    {datumText && <span class="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-1">{datumText}</span>}
+                    <h3 class="text-2xl font-bold text-slate-900 group-hover:text-[#329A44] transition-colors">{safeTitel}</h3>
+                  </div>
+                  
+                  <div set:html={renderBadge(item)}></div>
+                </div>
                 
-                {/* 🚀 FIXED: Kein [object Object] mehr, sondern das farbige Badge */}
-                <span class={`${badge.css} text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-full border inline-block shrink-0`}>
-                  {badge.text}
-                </span>
-              </div>
-              
-              <p class="rich-text text-slate-600 mb-6" set:html={projekt.data.kurzbeschreibung}></p>
-              
-              <span class="text-sm font-bold text-[#329A44]">Kompletten Artikel lesen &rarr;</span>
-            </a>
-          );
-        })}
+                <p class="rich-text text-slate-600 mb-6" set:html={description}></p>
+                
+                <span class="text-sm font-bold text-[#329A44]">Kompletten Artikel lesen &rarr;</span>
+              </a>
+            );
+          })
+        )}
       </div>
     </main>
   </body>

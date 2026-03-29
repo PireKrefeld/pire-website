@@ -1,0 +1,16 @@
+---
+import Home from '../../components/Home.astro';
+
+// Dieser Befehl generiert beim Upload automatisch alle Sprach-Ordner!
+export function getStaticPaths() {
+  return [
+    { params: { lang: 'ku' } },
+    { params: { lang: 'en' } },
+    { params: { lang: 'tr' } },
+  ];
+}
+
+const { lang } = Astro.params;
+---
+
+<Home currentLang={lang} />

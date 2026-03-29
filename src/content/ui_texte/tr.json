@@ -1,0 +1,17 @@
+{
+  "sprache": "tr",
+  "navKalender": "Kalendir",
+  "navProjekte": "Projenler",
+  "navBuendnisse": "Bündnisse",
+  "navSpenden": "Unterstützen",
+  "heroBtn1": "Yeni Dates",
+  "heroBtn2": "Yokurmak",
+  "btnDetails": "details →",
+  "btnArchiv": "Einrichtung des Aktionsarchivs",
+  "btnGoogleCal": "Google Kalender",
+  "btnAppleCal": "+ Elma / E-Post",
+  "statusAbgeschlossen": "Tamamlanmış",
+  "spendenBank": "Banka transferi",
+  "tickerPrefix": "aktüel",
+  "kalenderLeer": "Aktuell stehen keine neuen Termine an."
+}

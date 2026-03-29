@@ -1,27 +1,102 @@
 {
+  "sichtbarkeit": {
+    "kalender": true,
+    "projekte": true,
+    "buendnisse": true,
+    "spenden": true
+  },
   "kopfbereich": {
     "weisses_logo": false,
     "hero_headline": "Krefelds Brücke für<br><span class=\"text-[#329A44]\">Zusammenhalt & Solidarität</span>",
-    "hero_text": "Wir bringen Menschen zusammen, fördern kulturellen Austausch und schaffen Räume für Begegnung und Dialog. Ausgehend von unseren kurdisch-deutschen Wurzeln setzen wir uns für ein respektvolles Miteinander, kulturelle Vielfalt und eine lebendige Zivilgesellschaft ein.\n\nUnser Verein steht allen offen – unabhängig von Herkunft, Hintergrund oder Perspektive. Uns verbindet der Wunsch, voneinander zu lernen, gemeinsam aktiv zu werden und Brücken zwischen unterschiedlichen Menschen und Erfahrungen zu bauen.\n\nDurch gemeinsame Projekte, Veranstaltungen und Engagement möchten wir Austausch ermöglichen, Zusammenarbeit stärken und einen Ort schaffen, an dem sich Menschen begegnen, Ideen entwickeln und Verantwortung für die Gesellschaft übernehmen können."
+    "hero_text": "Wir bringen Menschen zusammen, fördern kulturellen Austausch und schaffen Räume für Begegnung und Dialog. Ausgehend von unseren kurdisch-deutschen Wurzeln setzen wir uns für ein respektvolles Miteinander, kulturelle Vielfalt und eine lebendige Zivilgesellschaft ein.\n\nUnser Verein steht allen offen – unabhängig von Herkunft, Hintergrund oder Perspektive. Uns verbindet der Wunsch, voneinander zu lernen, gemeinsam aktiv zu werden und Brücken zwischen unterschiedlichen Menschen und Erfahrungen zu bauen.\n\nDurch gemeinsame Projekte, Veranstaltungen und Engagement möchten wir Austausch ermöglichen, Zusammenarbeit stärken und einen Ort schaffen, an dem sich Menschen begegnen, Ideen entwickeln und Verantwortung für die Gesellschaft übernehmen können.",
+    "uebersetzungen": {
+      "ku": {
+        "hero_headline": "Krefeldê pirê ye ji bo<br><span class=\"text-[#329A44]\">hevbeşî û hevgirtinê</span>",
+        "hero_text": "Em mirovan bi hev re têkildar dikin, danûstandina çandî teşwîq dikin û cihên ji bo hevdîtin û dialogê diafirînin. Ji bingehên xwe yên kurdî-almanî derbas bûn, em ji bo jiyana hevpar a bi rêzdarî, pirrengiya çandî û civaka sivîl a zindî dixebitin.\n\nKomeleya me ji bo hemû kesan vekirî ye – bêyî ku li ser esl, paşxanî an perspektîv were cuda kirin. Tişta ku me di hev de girê dide, daxwaza fêrbûna ji hev, bi hev re çalak bûn û avakirina piran e di navbera mirovan û ezmûnên cuda de.\n\nBi projeyan, çalakiyan û tevlêbûna hevpar, em dixwazin danûstandinê mümkün bikin, hevkariyê xurt bikin û cihêk biafirînin ku li wir mirov hev bibînin, raman pêşve bibin û berpirsiyariya civakî bigirin."
+      },
+      "en": {
+        "hero_headline": "Krefeld’s bridge for<br><span class=\"text-[#329A44]\">cohesion & solidarity</span>",
+        "hero_text": "We bring people together, promote cultural exchange, and create spaces for encounter and dialogue. Building on our Kurdish-German roots, we are committed to respectful coexistence, cultural diversity, and a vibrant civil society.\n\nOur organization is open to everyone—regardless of origin, background, or perspective. What unites us is the desire to learn from one another, become active together, and build bridges between different people and experiences.\n\nThrough shared projects, events, and engagement, we aim to enable exchange, strengthen collaboration, and create a place where people can meet, develop ideas, and take responsibility for society."
+      },
+      "tr": {
+        "hero_headline": "Krefeld’in<br><span class=\"text-[#329A44]\">dayanışma ve birlik köprüsü</span>",
+        "hero_text": "İnsanları bir araya getiriyor, kültürel alışverişi teşvik ediyor ve buluşma ile diyalog için alanlar oluşturuyoruz. Kürt-Alman köklerimizden yola çıkarak saygılı bir birlikte yaşamı, kültürel çeşitliliği ve canlı bir sivil toplumu destekliyoruz.\n\nDerneğimiz herkese açıktır—köken, geçmiş ya da bakış açısı fark etmeksizin. Bizi bir araya getiren şey; birbirimizden öğrenme isteği, birlikte aktif olma arzusu ve farklı insanlar ile deneyimler arasında köprüler kurma hedefidir.\n\nOrtak projeler, etkinlikler ve gönüllü çalışmalar aracılığıyla; iletişimi güçlendirmeyi, iş birliğini artırmayı ve insanların bir araya gelip fikir geliştirebildiği ve toplum için sorumluluk alabildiği bir alan yaratmayı amaçlıyoruz."
+      }
+    }
   },
   "ueberschriften": {
     "kalender": "Kalender & Termine",
-    "kalender_leer": "Aktuell stehen keine neuen Termine an.",
     "projekte": "Aktuelle Projekte & Angebote",
     "buendnisse": "Bündnisarbeit & Netzwerk",
     "buendnisse_text": "Echte gesellschaftliche Arbeit funktioniert nur gemeinsam. Wir sind stolz auf den Austausch und die Solidarität mit unseren Partnern und befreundeten Organisationen in der Region.",
-    "spenden": "Unterstützen & Spenden"
+    "spenden": "Unterstützen & Spenden",
+    "uebersetzungen": {
+      "ku": {
+        "kalender": "Salname û Randevû",
+        "projekte": "Projeyên niha û pêşkêşî",
+        "buendnisse": "Xebata hevpeymaniyê û tor",
+        "buendnisse_text": "Xebata rastîn a civakî tenê bi hev re tê sererast kirin. Em bi danûstandin û hevgirtina bi hevkar û rêxistinên heval ên li herêmê re serbilind in.",
+        "spenden": "Piştgirî û bexşîn"
+      },
+      "en": {
+        "kalender": "Calendar & Events",
+        "projekte": "Current Projects & Offers",
+        "buendnisse": "Alliance Work & Network",
+        "buendnisse_text": "Real social work only works together. We are proud of the exchange and solidarity with our partners and allied organizations in the region.",
+        "spenden": "Support & Donations"
+      },
+      "tr": {
+        "kalender": "Takvim & Etkinlikler",
+        "projekte": "Güncel Projeler & Faaliyetler",
+        "buendnisse": "İttifak Çalışmaları & Ağ",
+        "buendnisse_text": "Gerçek toplumsal çalışma ancak birlikte mümkün olur. Bölgemizdeki partnerlerimiz ve dost kurumlarla olan dayanışma ve iletişimle gurur duyuyoruz.",
+        "spenden": "Destek & Bağış"
+      }
+    }
   },
   "social_feed": {
-    "anzeigen": false
+    "anzeigen": false,
+    "uebersetzungen": {
+      "ku": {},
+      "en": {},
+      "tr": {}
+    }
   },
   "spenden": {
-    "text": "Da wir uns aktuell in der Gründung befinden, sind finanzielle Zuwendungen juristisch als Schenkungen zu betrachten. Wir finanzieren damit Räume, Material für Aktionen und Bildungsarbeit für alle."
+    "text": "Da wir uns aktuell in der Gründung befinden, sind finanzielle Zuwendungen juristisch als Schenkungen zu betrachten. Wir finanzieren damit Räume, Material für Aktionen und Bildungsarbeit für alle.",
+    "uebersetzungen": {
+      "ku": {
+        "text": "Ji ber ku em niha di qonaxa damezrandinê de ne, alîkariyên aborî bi qanûnî wekî bexşîn tên hesibandin. Em bi vê re cih, materyal ji bo çalakiyan û xebata perwerdehiyê ji bo hemû kesan fînanse dikin."
+      },
+      "en": {
+        "text": "As we are currently in the process of founding, financial contributions are legally considered donations. We use them to fund spaces, materials for actions, and educational work for everyone."
+      },
+      "tr": {
+        "text": "Şu anda kuruluş aşamasında olduğumuz için maddi katkılar hukuki olarak bağış sayılmaktadır. Bu kaynaklarla mekân, etkinlik materyalleri ve herkes için eğitim çalışmaları finanse edilmektedir."
+      }
+    }
   },
   "mitmachen": {
     "ueberschrift": "Aktiv werden / Sachspenden",
     "beschreibung": "Du möchtest dich einbringen oder hast Sachspenden? Schreib uns!",
-    "button_text": "E-Mail schreiben"
+    "button_text": "E-Mail schreiben",
+    "uebersetzungen": {
+      "ku": {
+        "ueberschrift": "Çalak bibin / alîkariyên madî",
+        "beschreibung": "Tu dixwazî tevlî bibî an jî alîkariyên madî heye? Ji me re binivîse!",
+        "button_text": "E-name bişîne"
+      },
+      "en": {
+        "ueberschrift": "Get Involved / Material Donations",
+        "beschreibung": "Do you want to get involved or donate materials? Write to us!",
+        "button_text": "Write an email"
+      },
+      "tr": {
+        "ueberschrift": "Aktif Ol / Ayni Bağış",
+        "beschreibung": "Katkıda bulunmak ya da ayni bağış yapmak ister misin? Bize yaz!",
+        "button_text": "E-posta gönder"
+      }
+    }
   },
   "socials": [],
   "footer": {
@@ -33,6 +108,38 @@
     "standort_text": "Krefeld",
     "ueberschrift_werte": "Werte-Statement",
     "werte_statement": "Unsere Arbeit basiert auf bedingungsloser Solidarität, Demokratieförderung und intersektionalem Feminismus. Wir tolerieren keine Form von Rassismus, Antisemitismus, Sexismus oder Queerfeindlichkeit.",
-    "copyright_text": "© 2026 PIRE Krefeld. Alle Rechte vorbehalten."
+    "copyright_text": "© 2026 PIRE Krefeld. Alle Rechte vorbehalten.",
+    "uebersetzungen": {
+      "ku": {
+        "ueberschrift_kontakt": "Têkilî",
+        "text_kontakt": "Ji me re bi şîfrekirinê binivîse an jî bi rêya medyayên civakî bi me re têkilî daynin. Em hewl didin zûtirîn demê de bersiv bidin.",
+        "label_email": "E-name",
+        "label_standort": "Cih",
+        "standort_text": "Krefeld",
+        "ueberschrift_werte": "Daxuyaniya Nirxan",
+        "werte_statement": "Xebata me li ser hevgirtina bê şert, pêşxistina demokrasiyê û femînîzma interseksyonel ava bûye. Em tu cureyê nîjadperestî, antîsemîtîzm, seksîzm an dijminatiya li dijî kesên queer qebûl nakin.",
+        "copyright_text": "© 2026 PIRE Krefeld. Hemû maf parastî ne."
+      },
+      "en": {
+        "ueberschrift_kontakt": "Contact",
+        "text_kontakt": "Write to us securely or get in touch via social media. We try to respond as quickly as possible.",
+        "label_email": "Email",
+        "label_standort": "Location",
+        "standort_text": "Krefeld",
+        "ueberschrift_werte": "Values Statement",
+        "werte_statement": "Our work is based on unconditional solidarity, the promotion of democracy, and intersectional feminism. We do not tolerate any form of racism, antisemitism, sexism, or hostility towards queer people.",
+        "copyright_text": "© 2026 PIRE Krefeld. All rights reserved."
+      },
+      "tr": {
+        "ueberschrift_kontakt": "İletişim",
+        "text_kontakt": "Bize şifreli şekilde yazabilir veya sosyal medya üzerinden iletişime geçebilirsin. Mümkün olan en kısa sürede cevap vermeye çalışıyoruz.",
+        "label_email": "E-posta",
+        "label_standort": "Konum",
+        "standort_text": "Krefeld",
+        "ueberschrift_werte": "Değerler Bildirgesi",
+        "werte_statement": "Çalışmalarımız koşulsuz dayanışma, demokrasi teşviki ve kesişimsel feminizm temeline dayanır. Irkçılık, antisemitizm, cinsiyetçilik veya queer karşıtlığının hiçbir biçimini kabul etmiyoruz.",
+        "copyright_text": "© 2026 PIRE Krefeld. Tüm hakları saklıdır."
+      }
+    }
   }
 }

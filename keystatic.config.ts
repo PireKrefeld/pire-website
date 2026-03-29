@@ -1,4 +1,4 @@
-import { config, fields, collection, singleton, component } from '@keystatic/core';
+import { config, fields, collection, singleton } from '@keystatic/core';
 
 export default config({
   storage: { kind: 'local' },
@@ -10,7 +10,12 @@ export default config({
       format: { data: 'json' },
       schema: {
         anzeigen: fields.checkbox({ label: 'Ticker anzeigen?', defaultValue: true }),
-        text: fields.text({ label: 'Ticker Text' }),
+        text: fields.text({ label: 'Ticker Text (Deutsch)' }),
+        uebersetzungen: fields.object({
+          ku: fields.object({ text: fields.text({ label: 'Text (Kurdisch)' }) }),
+          en: fields.object({ text: fields.text({ label: 'Text (Englisch)' }) }),
+          tr: fields.object({ text: fields.text({ label: 'Text (Türkisch)' }) }),
+        }, { label: '🌍 ÜBERSETZUNGEN' })
       },
     }),
     
@@ -19,69 +24,85 @@ export default config({
       path: 'src/content/einstellungen/startseite',
       format: { data: 'json' },
       schema: {
-        // 🚀 KONTROLLZENTRUM FÜR SICHTBARKEIT
         sichtbarkeit: fields.object({
           kalender: fields.checkbox({ label: '📅 Kalender anzeigen?', defaultValue: true }),
           projekte: fields.checkbox({ label: '🛠️ Projekte anzeigen?', defaultValue: true }),
           buendnisse: fields.checkbox({ label: '🤝 Bündnisse anzeigen?', defaultValue: true }),
           spenden: fields.checkbox({ label: '💰 Spenden/Mitmachen anzeigen?', defaultValue: true }),
-        }, { label: '👁️ SICHTBARKEIT DER SEKTIONEN (Ein-/Ausschalten)' }),
+        }, { label: '👁️ SICHTBARKEIT DER SEKTIONEN' }),
 
         kopfbereich: fields.object({
           logo: fields.image({ label: 'Website Logo', directory: 'public/images/logo', publicPath: '/images/logo/' }),
-          weisses_logo: fields.checkbox({ label: 'Logo ist weiß? (Erzeugt automatisch einen dunklen Hintergrund)', defaultValue: false }),
-          hero_headline: fields.text({ label: 'Haupt-Überschrift', defaultValue: 'Krefelds Brücke für Zusammenhalt & Solidarität' }),
-          hero_text: fields.text({ label: 'Einleitungstext', multiline: true }),
+          weisses_logo: fields.checkbox({ label: 'Logo ist weiß?', defaultValue: false }),
+          hero_headline: fields.text({ label: 'Haupt-Überschrift (Deutsch)', defaultValue: 'Krefelds Brücke für Zusammenhalt & Solidarität' }),
+          hero_text: fields.text({ label: 'Einleitungstext (Deutsch)', multiline: true }),
+          uebersetzungen: fields.object({
+            ku: fields.object({ hero_headline: fields.text({ label: 'Überschrift (Kurdisch)' }), hero_text: fields.text({ label: 'Text (Kurdisch)', multiline: true }) }),
+            en: fields.object({ hero_headline: fields.text({ label: 'Überschrift (Englisch)' }), hero_text: fields.text({ label: 'Text (Englisch)', multiline: true }) }),
+            tr: fields.object({ hero_headline: fields.text({ label: 'Überschrift (Türkisch)' }), hero_text: fields.text({ label: 'Text (Türkisch)', multiline: true }) }),
+          }, { label: '🌍 ÜBERSETZUNGEN' })
         }, { label: '🎨 KOPFBEREICH & HERO' }),
         
         ueberschriften: fields.object({
-          kalender: fields.text({ label: 'Kalender Sektion', defaultValue: 'Kalender & Termine' }),
-          kalender_leer: fields.text({ label: 'Text wenn Kalender leer ist', defaultValue: 'Aktuell stehen keine neuen Termine an.' }),
-          projekte: fields.text({ label: 'Projekte Sektion', defaultValue: 'Aktuelle Projekte & Angebote' }),
-          buendnisse: fields.text({ label: 'Bündnisse Sektion', defaultValue: 'Bündnisarbeit & Netzwerk' }),
-          buendnisse_text: fields.text({ label: 'Einleitungstext Bündnisse', multiline: true }),
-          spenden: fields.text({ label: 'Spenden Sektion', defaultValue: 'Unterstützen & Spenden' }),
-        }, { label: '📝 ÜBERSCHRIFTEN DER SEKTIONEN' }),
+          kalender: fields.text({ label: 'Kalender (Deutsch)', defaultValue: 'Kalender & Termine' }),
+          projekte: fields.text({ label: 'Projekte (Deutsch)', defaultValue: 'Aktuelle Projekte & Angebote' }),
+          buendnisse: fields.text({ label: 'Bündnisse (Deutsch)', defaultValue: 'Bündnisarbeit & Netzwerk' }),
+          buendnisse_text: fields.text({ label: 'Bündnisse Text (Deutsch)', multiline: true }),
+          spenden: fields.text({ label: 'Spenden (Deutsch)', defaultValue: 'Unterstützen & Spenden' }),
+          uebersetzungen: fields.object({
+            ku: fields.object({ kalender: fields.text({ label: 'Kalender (KU)' }), projekte: fields.text({ label: 'Projekte (KU)' }), buendnisse: fields.text({ label: 'Bündnisse (KU)' }), buendnisse_text: fields.text({ label: 'Text (KU)', multiline: true }), spenden: fields.text({ label: 'Spenden (KU)' }) }),
+            en: fields.object({ kalender: fields.text({ label: 'Kalender (EN)' }), projekte: fields.text({ label: 'Projekte (EN)' }), buendnisse: fields.text({ label: 'Bündnisse (EN)' }), buendnisse_text: fields.text({ label: 'Text (EN)', multiline: true }), spenden: fields.text({ label: 'Spenden (EN)' }) }),
+            tr: fields.object({ kalender: fields.text({ label: 'Kalender (TR)' }), projekte: fields.text({ label: 'Projekte (TR)' }), buendnisse: fields.text({ label: 'Bündnisse (TR)' }), buendnisse_text: fields.text({ label: 'Text (TR)', multiline: true }), spenden: fields.text({ label: 'Spenden (TR)' }) }),
+          }, { label: '🌍 ÜBERSETZUNGEN' })
+        }, { label: '📝 ÜBERSCHRIFTEN' }),
 
         social_feed: fields.object({
-          anzeigen: fields.checkbox({ label: 'Social Feed Sektion anzeigen?', defaultValue: false }),
-          ueberschrift: fields.text({ label: 'Überschrift (z.B. Aktuelles von Instagram)', defaultValue: 'Folge uns auf Instagram' }),
-          embed_code: fields.text({ label: 'Embed-Code einfügen', multiline: true, description: 'Füge hier den HTML-Code deines Widgets ein.' }),
-        }, { label: '📸 SOCIAL MEDIA FEED WIDGET' }),
+          anzeigen: fields.checkbox({ label: 'Social Feed anzeigen?', defaultValue: false }),
+          ueberschrift: fields.text({ label: 'Überschrift (Deutsch)', defaultValue: 'Folge uns auf Instagram' }),
+          embed_code: fields.text({ label: 'Embed-Code einfügen', multiline: true }),
+          uebersetzungen: fields.object({
+            ku: fields.object({ ueberschrift: fields.text({ label: 'Überschrift (KU)' }) }),
+            en: fields.object({ ueberschrift: fields.text({ label: 'Überschrift (EN)' }) }),
+            tr: fields.object({ ueberschrift: fields.text({ label: 'Überschrift (TR)' }) }),
+          }, { label: '🌍 ÜBERSETZUNGEN' })
+        }, { label: '📸 SOCIAL MEDIA FEED' }),
         
         spenden: fields.object({
-          text: fields.text({ label: 'Aufruf-Text', multiline: true }),
-          opencollective: fields.url({ label: 'Link: Open Collective (Leer lassen zum Verstecken)' }),
-          paypal: fields.url({ label: 'Link: PayPal (Leer lassen zum Verstecken)' }),
-          liberapay: fields.url({ label: 'Link: Liberapay (Leer lassen zum Verstecken)' }),
-          iban: fields.text({ label: 'Bankverbindung / IBAN (Leer lassen zum Verstecken)' }),
+          text: fields.text({ label: 'Aufruf-Text (Deutsch)', multiline: true }),
+          opencollective: fields.url({ label: 'Link: Open Collective' }),
+          paypal: fields.url({ label: 'Link: PayPal' }),
+          liberapay: fields.url({ label: 'Link: Liberapay' }),
+          iban: fields.text({ label: 'IBAN' }),
+          uebersetzungen: fields.object({
+            ku: fields.object({ text: fields.text({ label: 'Text (KU)', multiline: true }) }),
+            en: fields.object({ text: fields.text({ label: 'Text (EN)', multiline: true }) }),
+            tr: fields.object({ text: fields.text({ label: 'Text (TR)', multiline: true }) }),
+          }, { label: '🌍 ÜBERSETZUNGEN' })
         }, { label: '💰 SPENDEN-LINKS' }),
 
         mitmachen: fields.object({
-          ueberschrift: fields.text({ label: 'Überschrift', defaultValue: 'Aktiv werden / Sachspenden' }),
-          beschreibung: fields.text({ label: 'Beschreibungstext', defaultValue: 'Du möchtest dich einbringen? Schreib uns direkt an!' }),
-          button_text: fields.text({ label: 'Button Text (Leer = Verstecken)', defaultValue: 'E-Mail schreiben' }),
+          ueberschrift: fields.text({ label: 'Überschrift (Deutsch)', defaultValue: 'Aktiv werden' }),
+          beschreibung: fields.text({ label: 'Beschreibung (Deutsch)', defaultValue: 'Schreib uns direkt an!' }),
+          button_text: fields.text({ label: 'Button Text (Deutsch)', defaultValue: 'E-Mail schreiben' }),
           button_link: fields.text({ label: 'Button Link / Ziel', defaultValue: 'mailto:piresolidarity@tuta.com' }),
+          uebersetzungen: fields.object({
+            ku: fields.object({ ueberschrift: fields.text({ label: 'Überschrift (KU)' }), beschreibung: fields.text({ label: 'Text (KU)' }), button_text: fields.text({ label: 'Button (KU)' }) }),
+            en: fields.object({ ueberschrift: fields.text({ label: 'Überschrift (EN)' }), beschreibung: fields.text({ label: 'Text (EN)' }), button_text: fields.text({ label: 'Button (EN)' }) }),
+            tr: fields.object({ ueberschrift: fields.text({ label: 'Überschrift (TR)' }), beschreibung: fields.text({ label: 'Text (TR)' }), button_text: fields.text({ label: 'Button (TR)' }) }),
+          }, { label: '🌍 ÜBERSETZUNGEN' })
         }, { label: '🤝 MITMACHEN (Grüne Box)' }),
         
         socials: fields.array(
           fields.object({
             plattform: fields.select({
               label: 'Plattform',
-              options: [
-                { label: 'Discord', value: 'discord' }, { label: 'WhatsApp', value: 'whatsapp' },
-                { label: 'Instagram', value: 'instagram' }, { label: 'Telegram', value: 'telegram' },
-                { label: 'Sonstiger Link', value: 'link' }
-              ],
+              options: [{ label: 'Discord', value: 'discord' }, { label: 'WhatsApp', value: 'whatsapp' }, { label: 'Instagram', value: 'instagram' }, { label: 'Telegram', value: 'telegram' }, { label: 'Link', value: 'link' }],
               defaultValue: 'instagram'
             }),
             url: fields.url({ label: 'Link (URL)' }),
             anzeigen_in: fields.multiselect({
-              label: 'Wo soll dieser Button angezeigt werden?',
-              options: [
-                { label: 'Grüne Mitmachen-Box', value: 'mitmachen' },
-                { label: 'Schwarzer Footer (Kontakt)', value: 'footer' }
-              ],
+              label: 'Wo anzeigen?',
+              options: [{ label: 'Grüne Box', value: 'mitmachen' }, { label: 'Footer', value: 'footer' }],
               defaultValue: ['footer']
             })
           }),
@@ -89,34 +110,44 @@ export default config({
         ),
         
         footer: fields.object({
-          ueberschrift_kontakt: fields.text({ label: 'Überschrift Kontakt', defaultValue: 'Kontakt' }),
-          text_kontakt: fields.text({ label: 'Zusatztext unter Kontakt (Optional)', multiline: true }),
-          label_email: fields.text({ label: 'Bezeichnung E-Mail (Leer = Verstecken)', defaultValue: 'Email: ✉️' }),
-          kontakt_email: fields.text({ label: 'Kontakt E-Mail Adresse', defaultValue: 'piresolidarity@tuta.com' }),
-          label_standort: fields.text({ label: 'Bezeichnung Standort (Leer = Verstecken)', defaultValue: 'Standort: 📍' }),
-          standort_text: fields.text({ label: 'Standort / Stadt', defaultValue: 'Krefeld' }),
-          ueberschrift_werte: fields.text({ label: 'Überschrift Werte-Statement', defaultValue: '🤝 Werte-Statement' }),
-          werte_statement: fields.text({ label: 'Werte-Statement Text', multiline: true }),
-          copyright_text: fields.text({ label: 'Copyright Hinweis', defaultValue: '© 2026 PIRE Krefeld. Alle Rechte vorbehalten.' }),
+          ueberschrift_kontakt: fields.text({ label: 'Überschrift Kontakt (DE)', defaultValue: 'Kontakt' }),
+          text_kontakt: fields.text({ label: 'Zusatztext Kontakt (DE)', multiline: true }),
+          label_email: fields.text({ label: 'Label E-Mail (DE)', defaultValue: 'Email: ✉️' }),
+          kontakt_email: fields.text({ label: 'Kontakt E-Mail', defaultValue: 'piresolidarity@tuta.com' }),
+          label_standort: fields.text({ label: 'Label Standort (DE)', defaultValue: 'Standort: 📍' }),
+          standort_text: fields.text({ label: 'Standort (DE)', defaultValue: 'Krefeld' }),
+          ueberschrift_werte: fields.text({ label: 'Überschrift Werte (DE)', defaultValue: '🤝 Werte-Statement' }),
+          werte_statement: fields.text({ label: 'Werte-Statement (DE)', multiline: true }),
+          copyright_text: fields.text({ label: 'Copyright (DE)', defaultValue: '© 2026 PIRE Krefeld.' }),
+          uebersetzungen: fields.object({
+            ku: fields.object({ ueberschrift_kontakt: fields.text({ label: 'Überschrift Kontakt (KU)' }), text_kontakt: fields.text({ label: 'Text Kontakt (KU)', multiline: true }), label_email: fields.text({ label: 'Label E-Mail (KU)' }), label_standort: fields.text({ label: 'Label Standort (KU)' }), standort_text: fields.text({ label: 'Standort (KU)' }), ueberschrift_werte: fields.text({ label: 'Überschrift Werte (KU)' }), werte_statement: fields.text({ label: 'Werte (KU)', multiline: true }), copyright_text: fields.text({ label: 'Copyright (KU)' }) }),
+            en: fields.object({ ueberschrift_kontakt: fields.text({ label: 'Überschrift Kontakt (EN)' }), text_kontakt: fields.text({ label: 'Text Kontakt (EN)', multiline: true }), label_email: fields.text({ label: 'Label E-Mail (EN)' }), label_standort: fields.text({ label: 'Label Standort (EN)' }), standort_text: fields.text({ label: 'Standort (EN)' }), ueberschrift_werte: fields.text({ label: 'Überschrift Werte (EN)' }), werte_statement: fields.text({ label: 'Werte (EN)', multiline: true }), copyright_text: fields.text({ label: 'Copyright (EN)' }) }),
+            tr: fields.object({ ueberschrift_kontakt: fields.text({ label: 'Überschrift Kontakt (TR)' }), text_kontakt: fields.text({ label: 'Text Kontakt (TR)', multiline: true }), label_email: fields.text({ label: 'Label E-Mail (TR)' }), label_standort: fields.text({ label: 'Label Standort (TR)' }), standort_text: fields.text({ label: 'Standort (TR)' }), ueberschrift_werte: fields.text({ label: 'Überschrift Werte (TR)' }), werte_statement: fields.text({ label: 'Werte (TR)', multiline: true }), copyright_text: fields.text({ label: 'Copyright (TR)' }) })
+          }, { label: '🌍 ÜBERSETZUNGEN' })
         }, { label: '⚖️ KONTAKT & FOOTER' }),
       },
     }),
 
     globalSettings: singleton({
-      label: '🌐 Globale Fallback Texte',
+      label: '🌐 Globale Einstellungen',
       path: 'src/content/settings/global',
       format: { data: 'json' },
       schema: {
         metaTitle: fields.text({ label: 'Browser Tab Titel', defaultValue: 'PIRE Krefeld | Solidarische Brücken bauen' }),
-        
-        // 🚀 NEU: HIER IST DAS UPLOAD-FELD FÜR DEIN FAVICON (Zeile 116)
-        favicon: fields.image({
-          label: 'Browser Favicon (Das kleine Icon oben im Tab)',
-          directory: 'public/images/theme',
-          publicPath: '/images/theme/'
-        }),
+        // 🚀 FAVICON IST WIEDER DA!
+        favicon: fields.image({ label: 'Browser Favicon', directory: 'public/images/theme', publicPath: '/images/theme/' }),
+      },
+    }),
+  },
 
-        tickerPrefix: fields.text({ label: 'Ticker-Signalwort (z.B. Aktuelles:)', defaultValue: 'Aktuelles:' }),
+  collections: {
+    ui_texte: collection({
+      label: '🌍 UI & Fallback Texte (Sprachen)',
+      slugField: 'sprache',
+      path: 'src/content/ui_texte/*',
+      format: { data: 'json' },
+      schema: {
+        sprache: fields.slug({ name: { label: 'Sprachkürzel (z.B. de, ku, en, tr)' } }),
         navKalender: fields.text({ label: 'Menü: Kalender', defaultValue: 'Kalender' }),
         navProjekte: fields.text({ label: 'Menü: Projekte', defaultValue: 'Projekte' }),
         navBuendnisse: fields.text({ label: 'Menü: Bündnisse', defaultValue: 'Bündnisse' }),
@@ -127,102 +158,126 @@ export default config({
         btnArchiv: fields.text({ label: 'Button: Archiv', defaultValue: 'Aktions-Archiv →' }),
         btnGoogleCal: fields.text({ label: 'Button: Google Calendar', defaultValue: '+ Google Cal' }),
         btnAppleCal: fields.text({ label: 'Button: Apple / Outlook', defaultValue: '+ Apple / Outlook' }),
-        eventStatusFallback: fields.text({ label: 'Standard-Wort für alte Events', defaultValue: 'Abgeschlossen' }),
-        spendenSubtitle: fields.text({ label: 'Spendenbox Untertitel', defaultValue: 'Gemeinsam Brücken bauen.' }),
-        spendenBank: fields.text({ label: 'Bezeichnung Banküberweisung', defaultValue: 'Banküberweisung' }),
+        statusAbgeschlossen: fields.text({ label: 'Status: Abgeschlossen', defaultValue: 'Abgeschlossen' }),
+        spendenBank: fields.text({ label: 'Text: Banküberweisung', defaultValue: 'Banküberweisung' }),
+        tickerPrefix: fields.text({ label: 'Ticker Signalwort', defaultValue: 'Aktuelles:' }),
+        kalenderLeer: fields.text({ label: 'Text: Kalender ist leer', defaultValue: 'Aktuell stehen keine neuen Termine an.' }),
       },
     }),
-  },
 
-  collections: {
-    termine: collection({
-      label: '📅 Kalender & Termine',
+    // 🚀 DIE NEUE MASTER-DATENBANK (ALLE FEATURES ZURÜCK!)
+    aktionen: collection({
+      label: '🚀 Aktionen, Projekte & Events',
       slugField: 'titel',
-      path: 'src/content/termine/*',
-      format: { data: 'json' },
+      path: 'src/content/aktionen/*',
+      format: { contentField: 'inhalt' },
       schema: {
-        titel: fields.slug({ name: { label: 'Event Name' } }),
-        customStatus: fields.text({
-          label: 'Individueller Event-Status (Optional)',
-          description: 'Leer lassen für den globalen Standard. Trage hier z.B. "Einzeltermin" ein.',
+        titel: fields.slug({ name: { label: 'Titel (Deutsch)' } }),
+        
+        uebersetzungen: fields.object({
+          ku: fields.object({ titel: fields.text({ label: 'Titel (Kurdisch)' }), kurzbeschreibung: fields.text({ label: 'Kurzbeschreibung (Kurdisch)', multiline: true }) }),
+          en: fields.object({ titel: fields.text({ label: 'Titel (Englisch)' }), kurzbeschreibung: fields.text({ label: 'Kurzbeschreibung (Englisch)', multiline: true }) }),
+          tr: fields.object({ titel: fields.text({ label: 'Titel (Türkisch)' }), kurzbeschreibung: fields.text({ label: 'Kurzbeschreibung (Türkisch)', multiline: true }) }),
+        }, { label: '🌍 ÜBERSETZUNGEN (Optional)' }),
+
+        // 🎯 ANZEIGE-ORT (Mit deinem neuen "Trotzdem anzeigen" Feature)
+        anzeige_ort: fields.multiselect({
+          label: 'Wo soll dieser Eintrag angezeigt werden?',
+          options: [
+            { label: '📅 Im Kalender / Termine', value: 'kalender' },
+            { label: '🛠️ Bei den Projekten', value: 'projekte' },
+            { label: '🗄️ Nur im Archiv', value: 'archiv' },
+            { label: '📌 PRO-TIPP: Auch wenn abgeschlossen, trotzdem auf der Startseite behalten!', value: 'immer_anzeigen' }
+          ],
+          defaultValue: ['projekte']
         }),
-        eventTyp: fields.conditional(
-          fields.select({
-            label: 'Art des Events',
-            options: [
-              { label: 'Einmaliges Event', value: 'einmalig' },
-              { label: 'Wiederkehrendes Event', value: 'wiederkehrend' },
-              { label: 'Jährliches Event', value: 'jaehrlich' },
-            ],
-            defaultValue: 'einmalig',
-          }),
-          {
-            einmalig: fields.object({ exaktes_datum: fields.date({ label: 'Exaktes Datum' }) }),
-            wiederkehrend: fields.object({ rhythmus: fields.text({ label: 'Rhythmus', description: 'z.B. Jeden 1. Dienstag' }) }),
-            jaehrlich: fields.object({ datum_text: fields.text({ label: 'Tag und Monat', description: 'z.B. 08. März' }) }),
-          }
-        ),
-        uhrzeit: fields.text({ label: 'Uhrzeit (z.B. 16:00)' }),
-        ort: fields.text({ label: 'Ort / Adresse' }),
-        beschreibung: fields.text({ label: 'Kurze Beschreibung', multiline: true }),
-      },
-    }),
 
-    projekte: collection({
-      label: '🛠️ Projekte & Aktionen',
-      slugField: 'titel',
-      path: 'src/content/projekte/*',
-      format: { contentField: 'inhalt' }, 
-      schema: {
-        titel: fields.slug({ name: { label: 'Titel des Projekts' } }),
-        status: fields.conditional(
+        // 🏷️ CUSTOM STATUS & BADGES (Jetzt mit "Kein Badge" Option)
+        status_badge: fields.conditional(
           fields.select({
-            label: 'Projekt-Status',
+            label: 'Status / Badge (Farbige Markierung)',
             options: [
-              { label: '🟢 Dauerhaftes Angebot', value: 'dauerhaft' },
-              { label: '🟡 Aktives/Laufendes Projekt', value: 'aktiv' },
-              { label: '⚪ Erfolgreich Abgeschlossen', value: 'abgeschlossen' },
-              { label: '❌ Abgebrochen / Fehlgeschlagen', value: 'abgebrochen' },
-              { label: '✏️ Eigener Status (Custom)', value: 'custom' },
+              { label: 'Automatisch (Aktiv/Archiv berechnet)', value: 'auto' },
+              { label: 'Eigenes Badge (z.B. "Mega Event")', value: 'custom' },
+              { label: '🚫 Gar kein Badge anzeigen', value: 'none' } // <-- NEU!
             ],
-            defaultValue: 'aktiv',
+            defaultValue: 'auto'
           }),
           {
-            dauerhaft: fields.empty(), aktiv: fields.empty(), abgeschlossen: fields.empty(), abgebrochen: fields.empty(),
+            auto: fields.empty(),
+            none: fields.empty(), // <-- NEU!
             custom: fields.object({
-              text: fields.text({ label: 'Eigener Text' }),
+              text: fields.text({ label: 'Text für das Badge' }),
               farbe: fields.select({
-                label: 'Hintergrundfarbe',
-                options: [
-                  { label: 'Grün', value: 'green' }, { label: 'Gelb', value: 'yellow' }, 
-                  { label: 'Rot', value: 'red' }, { label: 'Grau', value: 'slate' }
-                ],
-                defaultValue: 'green',
+                label: 'Farbe des Badges',
+                options: [{ label: 'Grün', value: 'green' }, { label: 'Gelb', value: 'yellow' }, { label: 'Rot', value: 'red' }, { label: 'Grau', value: 'slate' }],
+                defaultValue: 'green'
               })
             })
           }
         ),
-        kurzbeschreibung: fields.text({ label: 'Kurzbeschreibung (Startseite)', multiline: true }),
+
+        // ⏱️ ZEITPLANUNG (Einmalig, Wiederkehrend, Dauerhaft SIND ZURÜCK!)
+        zeitplanung: fields.conditional(
+          fields.select({ 
+            label: 'Zeitlicher Rahmen', 
+            options: [{ label: 'Einmaliges Datum', value: 'einmalig' }, { label: 'Wiederkehrend / Rhythmus', value: 'wiederkehrend' }, { label: 'Dauerhaft (Kein Datum)', value: 'dauerhaft' }], 
+            defaultValue: 'einmalig' 
+          }),
+          {
+            einmalig: fields.object({
+              datum: fields.date({ label: 'Exaktes Datum (Wenn in Vergangenheit -> Auto-Archiv)' }),
+              uhrzeit: fields.text({ label: 'Uhrzeit (Optional, z.B. 18:00 Uhr)' })
+            }),
+            wiederkehrend: fields.object({
+              rhythmus: fields.text({ label: 'Rhythmus (z.B. Jeden 1. Freitag im Monat)' }),
+              uhrzeit: fields.text({ label: 'Uhrzeit (Optional)' })
+            }),
+            dauerhaft: fields.empty()
+          }
+        ),
+
+        details: fields.object({
+          ort: fields.text({ label: 'Ort / Adresse (Optional)' }),
+          kurzbeschreibung: fields.text({ label: 'Kurze Einleitung (Startseite)', multiline: true }),
+          beitragsbild: fields.image({ label: 'Beitragsbild', directory: 'public/images/aktionen', publicPath: '/images/aktionen/' }),
+        }, { label: '📍 Basis-Infos & Bild' }),
+
+        // 💡 FAKTEN-BOXEN SIND ZURÜCK!
         fakten: fields.array(
           fields.object({
-            icon: fields.text({ label: 'Emoji / Icon', description: 'z.B. 📍 oder ⏰' }),
-            bezeichnung: fields.text({ label: 'Bezeichnung', description: 'z.B. Wann' }),
-            wert: fields.text({ label: 'Wert', description: 'z.B. Jeden Freitag' }),
+            icon: fields.text({ label: 'Emoji / Icon (z.B. ⏱️)' }),
+            bezeichnung: fields.text({ label: 'Bezeichnung (z.B. Dauer)' }),
+            wert: fields.text({ label: 'Wert (z.B. 3 Stunden)' })
           }),
-          { label: 'Fakten-Boxen (Wann/Wo/Wie)', itemLabel: props => props.fields.bezeichnung.value || 'Neuer Fakt' }
+          { label: '💡 Fakten-Boxen', itemLabel: props => props.fields.bezeichnung.value || 'Neuer Fakt' }
         ),
-        inhalt: fields.document({
-          label: 'Ausführlicher Artikel',
-          formatting: true, links: true,
-          images: { directory: 'public/images/projekte', publicPath: '/images/projekte/' },
-          componentBlocks: {
-            media: component({
-              label: '📺 Medien einbetten (YouTube / Insta)',
-              schema: { url: fields.url({ label: 'Link zum Video / Post einfügen' }) },
-              preview: () => null,
-            })
+
+        aktionen_links: fields.array(
+          fields.object({
+            label: fields.text({ label: 'Button-Text (z.B. WhatsApp-Gruppe)' }),
+            url: fields.url({ label: 'Link (URL)' }),
+            zeige_qr: fields.checkbox({ label: 'QR-Code für diesen Link generieren?', defaultValue: false })
+          }),
+          { label: '🔗 Externe Links & Buttons', itemLabel: props => props.fields.label.value }
+        ),
+
+        // 📚 DIE HISTORIE (SAUBER, OHNE DUMMY-SCHALTER!)
+        historie_aktiv: fields.conditional(
+          fields.checkbox({ label: '📚 Archiv / Historie für dieses Event aktivieren? (Klappt Liste auf)' }),
+          {
+            true: fields.array(
+              fields.object({
+                jahr: fields.text({ label: 'Jahr / Datum (z.B. 2025)' }),
+                text: fields.text({ label: 'Kurzer Rückblick', multiline: true }),
+              }),
+              { label: 'Vergangene Ausführungen (z.B. Newroz 2024)', itemLabel: props => props.fields.jahr.value }
+            ),
+            false: fields.empty()
           }
-        }),
+        ),
+
+        inhalt: fields.document({ label: 'Ausführlicher Artikel (Mit Bildern, Formatierung, etc.)', formatting: true, links: true, images: { directory: 'public/images/aktionen_artikel', publicPath: '/images/aktionen_artikel/' } }),
       },
     }),
 
@@ -235,7 +290,7 @@ export default config({
         name: fields.slug({ name: { label: 'Name der Organisation' } }),
         link: fields.url({ label: 'Webseite (Optional)' }),
         logo: fields.image({ label: 'Logo hochladen', directory: 'public/images/buendnisse', publicPath: '/images/buendnisse/' }),
-        weisses_logo: fields.checkbox({ label: 'Logo ist weiß? (Erzeugt dunklen Hintergrund)', defaultValue: false }),
+        weisses_logo: fields.checkbox({ label: 'Logo ist weiß?', defaultValue: false }),
       },
     }),
   },

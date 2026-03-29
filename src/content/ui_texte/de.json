@@ -1,0 +1,17 @@
+{
+  "sprache": "de",
+  "navKalender": "Kalender",
+  "navProjekte": "Projekte",
+  "navBuendnisse": "Bündnisse",
+  "navSpenden": "Unterstützen",
+  "heroBtn1": "Aktuelle Termine",
+  "heroBtn2": "Mitmachen",
+  "btnDetails": "Details →",
+  "btnArchiv": "Aktions-Archiv →",
+  "btnGoogleCal": "+ Google Cal",
+  "btnAppleCal": "+ Apple / Outlook",
+  "statusAbgeschlossen": "Abgeschlossen",
+  "spendenBank": "Banküberweisung",
+  "tickerPrefix": "Aktuelles:",
+  "kalenderLeer": "Aktuell stehen keine neuen Termine an."
+}
